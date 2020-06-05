@@ -1,10 +1,13 @@
-package com.my.accountmanager.domain;
+package com.my.accountmanager.domain.entity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
+/**
+ * @author M.Yeganeh on 31/05/2020.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "CUSTOMER")
@@ -19,6 +22,9 @@ public class CustomerEntity extends Auditable<String> {
 
     @Column(name = "LAST_NAME")
     private String lastName;
+
+    @Column(name = "CUSTOMER_Number")
+    private String customerNumber;
 
     @Column(name = "EMAIL")
     @Email
@@ -52,6 +58,14 @@ public class CustomerEntity extends Auditable<String> {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public String getCustomerNumber() {
+        return customerNumber;
+    }
+
+    public void setCustomerNumber(String customerNumber) {
+        this.customerNumber = customerNumber;
     }
 
     public String getEmail() {

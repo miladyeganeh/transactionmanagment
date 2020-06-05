@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RestController;
  * @author M.Yeganeh on 01/06/2020.
  */
 @RestController
-@RequestMapping("api/transaction")
-public class TransactionController {
+@RequestMapping("api/account")
+public class AccountController {
 }

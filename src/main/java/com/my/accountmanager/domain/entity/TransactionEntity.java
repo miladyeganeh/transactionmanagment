@@ -1,9 +1,13 @@
-package com.my.accountmanager.domain;
+package com.my.accountmanager.domain.entity;
 
+import com.my.accountmanager.domain.enums.TransactionType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 
+/**
+ * @author M.Yeganeh on 31/05/2020.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "TRANSACTION")
@@ -13,11 +17,17 @@ public class TransactionEntity extends Auditable<String> {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "TRANSACTIONID")
+    @Column(name = "TRANSACTIONID", unique = true)
     private String transactionID;
 
     @Column(name = "TERMINALID")
     private String terminalID;
+
+    @Column(name = "AMOUNT")
+    private Double amount;
+
+    @Column(name = "TYPE")
+    private TransactionType type;
 
     @OneToOne
     private TransactionEntity reversTransaction;
@@ -49,6 +59,22 @@ public class TransactionEntity extends Auditable<String> {
 
     public String getTerminalID() {
         return terminalID;
+    }
+
+    public Double getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Double amount) {
+        this.amount = amount;
+    }
+
+    public TransactionType getType() {
+        return type;
+    }
+
+    public void setType(TransactionType type) {
+        this.type = type;
     }
 
     public void setTerminalID(String terminalID) {

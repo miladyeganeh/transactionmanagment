@@ -1,6 +1,6 @@
 package com.my.accountmanager.service.implementation;
 
-import com.my.accountmanager.service.BaseService;
+import com.my.accountmanager.service.BaseCrudService;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
@@ -8,10 +8,11 @@ import java.util.Optional;
 /**
  * @author M.Yeganeh on 31/05/2020.
  */
-public abstract class BaseServiceImpl<T, R extends JpaRepository<T, Long>> implements BaseService<T> {
+//todo making Id type to generic
+public abstract class BaseCrudServiceImpl<T, R extends JpaRepository<T, Long>> implements BaseCrudService<T> {
     private R repository;
 
-    public BaseServiceImpl(R repository) {
+    public BaseCrudServiceImpl(R repository) {
         this.repository = repository;
     }
 
@@ -34,7 +35,7 @@ public abstract class BaseServiceImpl<T, R extends JpaRepository<T, Long>> imple
     }
 
     @Override
-    public Optional<T> get(Long id){
+    public Optional<T> getById(Long id){
         return repository.findById(id);
     }
 

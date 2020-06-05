@@ -1,6 +1,6 @@
 package com.my.accountmanager.service.implementation;
 
-import com.my.accountmanager.domain.DocumentItemEntity;
+import com.my.accountmanager.domain.entity.DocumentItemEntity;
 import com.my.accountmanager.repository.DocumentItemRepository;
 import com.my.accountmanager.service.DocumentItemService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
  */
 
 @Service
-public class DocumentItemServiceImpl extends BaseServiceImpl<DocumentItemEntity, DocumentItemRepository> implements DocumentItemService {
+public class DocumentItemServiceImpl extends BaseCrudServiceImpl<DocumentItemEntity, DocumentItemRepository> implements DocumentItemService {
     @Autowired
     public DocumentItemServiceImpl(DocumentItemRepository repository) {
         super(repository);

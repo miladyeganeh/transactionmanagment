@@ -5,7 +5,7 @@ import java.util.Optional;
 /**
  * @author M.Yeganeh on 31/05/2020.
  */
-public interface BaseService<T> {
+public interface BaseCrudService<T> {
 
     public T save(T obj);
 
@@ -13,7 +13,7 @@ public interface BaseService<T> {
 
     public boolean delete(T obj);
 
-    public Optional<T> get(Long id);
+    public Optional<T> getById(Long id);
 
     public Iterable<T> getAll();
 }

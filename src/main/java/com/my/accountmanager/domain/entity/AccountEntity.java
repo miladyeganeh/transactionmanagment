@@ -1,10 +1,15 @@
-package com.my.accountmanager.domain;
+package com.my.accountmanager.domain.entity;
 
+import com.my.accountmanager.domain.enums.AccountStatus;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Date;
 import java.util.Set;
 
+/**
+ * @author M.Yeganeh on 31/05/2020.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "ACCOUNT")
@@ -16,6 +21,18 @@ public class AccountEntity extends Auditable<String> {
 
     @Column(name = "BALANCE")
     private Double balance;
+
+    @Column(name = "ACCOUNT_NUMBER")
+    private String accountNumber;
+
+    @Column(name = "OPENING_DATE")
+    private Date openingDate;
+
+    @Column(name = "IS_ACTIVE")
+    private boolean isActive;
+
+    @Column(name = "STATUS")
+    private AccountStatus status;
 
     @ManyToOne
     @JoinColumn(name = "CUSTOMER_ID")
@@ -44,6 +61,38 @@ public class AccountEntity extends Auditable<String> {
 
     public void setBalance(Double balance) {
         this.balance = balance;
+    }
+
+    public String getAccountNumber() {
+        return accountNumber;
+    }
+
+    public void setAccountNumber(String accountNumber) {
+        this.accountNumber = accountNumber;
+    }
+
+    public Date getOpeningDate() {
+        return openingDate;
+    }
+
+    public void setOpeningDate(Date openingDate) {
+        this.openingDate = openingDate;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean active) {
+        isActive = active;
+    }
+
+    public AccountStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AccountStatus status) {
+        this.status = status;
     }
 
     public CustomerEntity getCustomer() {

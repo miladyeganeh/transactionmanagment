@@ -2,6 +2,9 @@ package com.my.accountmanager.exception;
 
 import org.springframework.context.i18n.LocaleContextHolder;
 
+/**
+ * @author M.Yeganeh on 31/05/2020.
+ */
 public interface SystemException {
     ExceptionMessageSource messageSource = new ExceptionMessageSource();
 

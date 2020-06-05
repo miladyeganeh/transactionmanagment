@@ -1,10 +1,13 @@
-package com.my.accountmanager.domain;
+package com.my.accountmanager.domain.entity;
 
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Set;
 
+/**
+ * @author M.Yeganeh on 31/05/2020.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "DEPOSIT")
@@ -14,14 +17,15 @@ public class DepositEntity extends Auditable<String> {
     @GeneratedValue
     private Long id;
 
-    @Column(name = "DEPOSIT_NUMBER")
+    @Column(name = "DEPOSIT_NUMBER", nullable = false)
     private String depositNumber;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "ACCOUNT_ID")
+    @JoinColumn(name = "ACCOUNT_ID", nullable = false)
     private AccountEntity account;
 
     @OneToMany(mappedBy = "deposit")
+    @Column(name = "TRANSACTION", nullable = false)
     private Set<TransactionEntity> transaction;
 
     public DepositEntity() {

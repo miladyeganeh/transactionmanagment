@@ -1,11 +1,12 @@
-package com.my.accountmanager.domain;
+package com.my.accountmanager.domain.entity;
 
-import org.hibernate.envers.Audited;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
-import java.io.Serializable;
 
+/**
+ * @author M.Yeganeh on 31/05/2020.
+ */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "CURRENCY")
