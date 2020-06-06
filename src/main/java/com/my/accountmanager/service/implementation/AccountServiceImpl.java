@@ -23,7 +23,6 @@ public class AccountServiceImpl extends BaseCrudServiceImpl<AccountEntity, Accou
         this.accountRepository = accountRepository;
     }
 
-
     @Override
     public Optional<AccountEntity> getByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber);

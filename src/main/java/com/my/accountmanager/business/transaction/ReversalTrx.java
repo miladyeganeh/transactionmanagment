@@ -1,6 +1,6 @@
 package com.my.accountmanager.business.transaction;
 
-import com.my.accountmanager.domain.dto.request.TransactionRequestDTO;
+import com.my.accountmanager.domain.dto.request.TransactionDTO;
 import com.my.accountmanager.model.TrxValidatorMessages;
 
 import java.util.List;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ReversalTrx extends ProcessTrx{
     @Override
-    void initiate(TransactionRequestDTO transactionRequestDTO) {
+    void initiate(TransactionDTO transactionRequestDTO) {
 
     }
 

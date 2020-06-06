@@ -16,4 +16,9 @@ public class DocumentServiceImpl extends BaseCrudServiceImpl<DocumentEntity, Doc
     public DocumentServiceImpl(DocumentRepository repository) {
         super(repository);
     }
+
+    @Override
+    public DocumentEntity createDocument(DocumentEntity documentEntity) {
+        return super.save(documentEntity);
+    }
 }

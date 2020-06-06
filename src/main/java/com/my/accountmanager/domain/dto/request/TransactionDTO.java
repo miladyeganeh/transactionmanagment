@@ -2,7 +2,7 @@ package com.my.accountmanager.domain.dto.request;
 
 import java.util.Date;
 
-public class TransactionRequestDTO {
+public class TransactionDTO {
 
     private String trxID;
     private Date time;

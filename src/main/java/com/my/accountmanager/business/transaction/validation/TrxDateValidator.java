@@ -4,7 +4,7 @@ import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import org.springframework.stereotype.Component;
 
-@Component
+@Component("trxDateValidator")
 public class TrxDateValidator implements TrxValidator{
 
     @Override

@@ -1,13 +1,11 @@
 package com.my.accountmanager.business.transaction.validation.aggregator;
 
 
-import com.my.accountmanager.business.transaction.validation.TrxDuplicationValidator;
-import com.my.accountmanager.business.transaction.validation.TrxFromAccountValidator;
-import com.my.accountmanager.business.transaction.validation.TrxDateValidator;
+import com.my.accountmanager.business.transaction.validation.TrxValidator;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
-import com.my.accountmanager.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -16,19 +14,24 @@ import java.util.List;
 @Component("withdrawValidatorAggregator")
 public class WithdrawValidatorAggregator implements ValidationAggregator{
 
-    private AccountService accountService;
+    private final TrxValidator trxDateValidator;
+    private final TrxValidator trxFromAccountValidator;
+    private final TrxValidator trxDuplicationValidator;
 
     @Autowired
-    public WithdrawValidatorAggregator(AccountService accountService) {
-        this.accountService = accountService;
+    public WithdrawValidatorAggregator(@Qualifier("trxDateValidator") TrxValidator trxDateValidator,
+                                       @Qualifier("trxFromAccountValidator") TrxValidator trxFromAccountValidator,
+                                       @Qualifier("trxDuplicationValidator") TrxValidator trxDuplicationValidator) {
+        this.trxDateValidator = trxDateValidator;
+        this.trxFromAccountValidator = trxFromAccountValidator;
+        this.trxDuplicationValidator = trxDuplicationValidator;
     }
-
     @Override
     public List<TrxValidatorMessages> aggregate(TrxValidation trxValidation) {
         List<TrxValidatorMessages> trxValidatorMessages = new ArrayList<>();
-        trxValidatorMessages.add(new TrxDateValidator().validate(trxValidation));
-        trxValidatorMessages.add(new TrxFromAccountValidator(this.accountService).validate(trxValidation));
-        trxValidatorMessages.add(new TrxDuplicationValidator().validate(trxValidation));
+        trxValidatorMessages.add(this.trxDateValidator.validate(trxValidation));
+        trxValidatorMessages.add(this.trxDuplicationValidator.validate(trxValidation));
+        trxValidatorMessages.add(this.trxFromAccountValidator.validate(trxValidation));
 
         return trxValidatorMessages;
     }

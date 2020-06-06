@@ -9,7 +9,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.Optional;
 
-@Component
+@Component("trxDuplicationValidator")
 public class TrxDuplicationValidator implements TrxValidator {
 
     private TransactionService transactionService;

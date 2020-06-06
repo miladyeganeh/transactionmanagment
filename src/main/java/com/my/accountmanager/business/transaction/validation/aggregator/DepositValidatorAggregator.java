@@ -1,11 +1,10 @@
 package com.my.accountmanager.business.transaction.validation.aggregator;
 
-import com.my.accountmanager.business.transaction.validation.TrxDateValidator;
-import com.my.accountmanager.business.transaction.validation.TrxDuplicationValidator;
-import com.my.accountmanager.business.transaction.validation.TrxFromAccountValidator;
+import com.my.accountmanager.business.transaction.validation.TrxValidator;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -14,14 +13,14 @@ import java.util.List;
 @Component("depositValidatorAggregator")
 public class DepositValidatorAggregator implements ValidationAggregator{
 
-    private final TrxDateValidator trxDateValidator;
-    private final TrxFromAccountValidator trxFromAccountValidator;
-    private final TrxDuplicationValidator trxDuplicationValidator;
+    private final TrxValidator trxDateValidator;
+    private final TrxValidator trxFromAccountValidator;
+    private final TrxValidator trxDuplicationValidator;
 
     @Autowired
-    public DepositValidatorAggregator(TrxDateValidator trxDateValidator,
-                                      TrxFromAccountValidator trxFromAccountValidator,
-                                      TrxDuplicationValidator trxDuplicationValidator) {
+    public DepositValidatorAggregator(@Qualifier("trxDateValidator") TrxValidator trxDateValidator,
+                                      @Qualifier("trxFromAccountValidator") TrxValidator trxFromAccountValidator,
+                                      @Qualifier("trxDuplicationValidator") TrxValidator trxDuplicationValidator) {
         this.trxDateValidator = trxDateValidator;
         this.trxFromAccountValidator = trxFromAccountValidator;
         this.trxDuplicationValidator = trxDuplicationValidator;
