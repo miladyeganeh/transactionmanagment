@@ -1,13 +1,14 @@
-package com.my.accountmanager.domain.dto.request;
+package com.my.accountmanager.model.dto.request;
 
 import java.util.Date;
 
-public class TransactionDTO {
+public class TransactionRequestDTO {
 
     private String trxID;
     private Date time;
     private Double amount;
-    private String transactionType;
+    private Integer terminalId;
+    private Integer transactionType;
     private AccountRequestDTO sourceAccount;
     private AccountRequestDTO destinationAccount;
 
@@ -35,11 +36,19 @@ public class TransactionDTO {
         this.amount = amount;
     }
 
-    public String getTransactionType() {
+    public Integer getTerminalId() {
+        return terminalId;
+    }
+
+    public void setTerminalId(Integer terminalId) {
+        this.terminalId = terminalId;
+    }
+
+    public Integer getTransactionType() {
         return transactionType;
     }
 
-    public void setTransactionType(String transactionType) {
+    public void setTransactionType(Integer transactionType) {
         this.transactionType = transactionType;
     }
 

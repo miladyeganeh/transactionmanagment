@@ -16,4 +16,9 @@ public class DocumentItemServiceImpl extends BaseCrudServiceImpl<DocumentItemEnt
     public DocumentItemServiceImpl(DocumentItemRepository repository) {
         super(repository);
     }
+
+    @Override
+    public DocumentItemEntity createDocumentItem(DocumentItemEntity documentItem) {
+        return super.save(documentItem);
+    }
 }

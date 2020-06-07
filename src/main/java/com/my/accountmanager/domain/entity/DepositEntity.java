@@ -20,6 +20,9 @@ public class DepositEntity extends Auditable<String> {
     @Column(name = "DEPOSIT_NUMBER", nullable = false)
     private String depositNumber;
 
+    @Column(name = "IS_DEFAULT", nullable = false)
+    private boolean isDefault;
+
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "ACCOUNT_ID", nullable = false)
     private AccountEntity account;
@@ -45,6 +48,14 @@ public class DepositEntity extends Auditable<String> {
 
     public void setDepositNumber(String depositNumber) {
         this.depositNumber = depositNumber;
+    }
+
+    public boolean getIsDefault() {
+        return isDefault;
+    }
+
+    public void setIsDefault(boolean aDefault) {
+        isDefault = aDefault;
     }
 
     public AccountEntity getAccount() {

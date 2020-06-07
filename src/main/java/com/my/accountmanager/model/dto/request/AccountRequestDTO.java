@@ -1,6 +1,4 @@
-package com.my.accountmanager.domain.dto.request;
-
-import java.util.Date;
+package com.my.accountmanager.model.dto.request;
 
 public class AccountRequestDTO {
     private String accountNumber;

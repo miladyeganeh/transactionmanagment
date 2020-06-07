@@ -1,6 +1,5 @@
 package com.my.accountmanager.service;
 
-import com.my.accountmanager.domain.dto.request.TransactionDTO;
 import com.my.accountmanager.domain.entity.TransactionEntity;
 
 import java.util.Optional;
@@ -10,5 +9,5 @@ import java.util.Optional;
  */
 public interface TransactionService {
     Optional<TransactionEntity> getByTransactionID(String transactionID);
-    TransactionDTO createTransaction(TransactionDTO transactionDTO);
+    TransactionEntity createTransaction(TransactionEntity TransactionEntity);
 }

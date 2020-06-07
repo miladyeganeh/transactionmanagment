@@ -1,6 +1,5 @@
 package com.my.accountmanager.service.implementation;
 
-import com.my.accountmanager.domain.dto.request.TransactionDTO;
 import com.my.accountmanager.domain.entity.TransactionEntity;
 import com.my.accountmanager.repository.TransactionRepository;
 import com.my.accountmanager.service.TransactionService;
@@ -26,16 +25,7 @@ public class TransactionServiceImpl extends BaseCrudServiceImpl<TransactionEntit
     }
 
     @Override
-    public TransactionDTO createTransaction(TransactionDTO transactionDTO) {
-        // convert transactionDTO to TransactionEntity
-        TransactionEntity createdTransaction = super.save(new TransactionEntity());
-        // convert TransactionEntity to TransactionDTO
-        return new TransactionDTO();
-    }
-
-    @Override
-    public boolean isUniqueTransactionId(String transactionID) {
-        Optional<TransactionEntity> duplicatedTransaction = getByTransactionID(transactionID);
-        return duplicatedTransaction.isEmpty();
+    public TransactionEntity createTransaction(TransactionEntity TransactionEntity) {
+        return super.save(TransactionEntity);
     }
 }

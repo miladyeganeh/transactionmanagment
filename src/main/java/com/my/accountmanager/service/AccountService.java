@@ -9,4 +9,5 @@ import java.util.Optional;
  */
 public interface AccountService {
     Optional<AccountEntity> getByAccountNumber(String accountNumber);
+    AccountEntity save(AccountEntity accountEntity);
 }

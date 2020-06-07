@@ -4,6 +4,7 @@ import com.my.accountmanager.domain.enums.TransactionType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
+import java.util.Date;
 
 /**
  * @author M.Yeganeh on 31/05/2020.
@@ -21,13 +22,21 @@ public class TransactionEntity extends Auditable<String> {
     private String transactionID;
 
     @Column(name = "TERMINALID")
-    private String terminalID;
+    private Integer terminalID;
 
     @Column(name = "AMOUNT")
     private Double amount;
 
     @Column(name = "TYPE")
     private TransactionType type;
+
+    private Date trxDate;
+
+    @OneToOne
+    private AccountEntity sourceAccount;
+
+    @OneToOne
+    private AccountEntity destinationAccount;
 
     @OneToOne
     private TransactionEntity reversTransaction;
@@ -57,8 +66,12 @@ public class TransactionEntity extends Auditable<String> {
         this.transactionID = transactionID;
     }
 
-    public String getTerminalID() {
+    public Integer getTerminalID() {
         return terminalID;
+    }
+
+    public void setTerminalID(Integer terminalID) {
+        this.terminalID = terminalID;
     }
 
     public Double getAmount() {
@@ -77,8 +90,28 @@ public class TransactionEntity extends Auditable<String> {
         this.type = type;
     }
 
-    public void setTerminalID(String terminalID) {
-        this.terminalID = terminalID;
+    public Date getTrxDate() {
+        return trxDate;
+    }
+
+    public void setTrxDate(Date trxDate) {
+        this.trxDate = trxDate;
+    }
+
+    public AccountEntity getSourceAccount() {
+        return sourceAccount;
+    }
+
+    public void setSourceAccount(AccountEntity sourceAccount) {
+        this.sourceAccount = sourceAccount;
+    }
+
+    public AccountEntity getDestinationAccount() {
+        return destinationAccount;
+    }
+
+    public void setDestinationAccount(AccountEntity destinationAccount) {
+        this.destinationAccount = destinationAccount;
     }
 
     public TransactionEntity getReversTransaction() {

@@ -1,24 +1,25 @@
 package com.my.accountmanager.business.transaction;
 
-import com.my.accountmanager.domain.dto.request.TransactionDTO;
 import com.my.accountmanager.model.TrxValidatorMessages;
+import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
+import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-
+@Component("reversalTrx")
 public class ReversalTrx extends ProcessTrx{
     @Override
-    void initiate(TransactionDTO transactionRequestDTO) {
+    public void initiate(TransactionRequestDTO transactionRequestDTO) {
 
     }
 
     @Override
-    protected List<TrxValidatorMessages> validate() {
+    public List<TrxValidatorMessages> validate() {
         return null;
     }
 
     @Override
-    void doTransaction() {
+    public void doTransaction() {
 
     }
 }
