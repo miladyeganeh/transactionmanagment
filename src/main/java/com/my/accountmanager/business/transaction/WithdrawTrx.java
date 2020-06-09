@@ -3,7 +3,7 @@ package com.my.accountmanager.business.transaction;
 import com.my.accountmanager.business.transaction.validation.aggregator.ValidationAggregator;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
-import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
+import com.my.accountmanager.model.dto.TransactionDTO;
 import com.my.accountmanager.service.DocumentService;
 import com.my.accountmanager.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +28,7 @@ public class WithdrawTrx extends ProcessTrx {
     }
 
     @Override
-    public void initiate(TransactionRequestDTO transactionRequestDTO) {
+    public void initiate(TransactionDTO transactionRequestDTO) {
         this.trxValidation.setSourceAccountNumber(transactionRequestDTO.getSourceAccount().getAccountNumber());
     }
 

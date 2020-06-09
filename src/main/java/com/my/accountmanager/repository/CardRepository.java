@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface CardRepository extends JpaRepository<CardEntity, Long> {
+    CardEntity getByCardPAN(String cardPAN);
 }

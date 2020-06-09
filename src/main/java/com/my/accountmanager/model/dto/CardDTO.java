@@ -1,55 +1,30 @@
-package com.my.accountmanager.domain.entity;
+package com.my.accountmanager.model.dto;
 
+import com.my.accountmanager.domain.entity.CardEntity;
 import com.my.accountmanager.domain.enums.CardType;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import org.modelmapper.ModelMapper;
 
-import javax.persistence.*;
+public class CardDTO {
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
-@Entity
-@EntityListeners(AuditingEntityListener.class)
-@Table(name = "CARD")
-public class CardEntity extends Auditable<String> {
-
-    @Id
-    @GeneratedValue
     private Long id;
-
-    @Column(name = "Card_Holder_Name")
     private String cardHolderName;
-
-    @Column(name = "CARDPAN")
     private String cardPAN;
-
-    @Column(name = "PIN")
     private String pin;
-
-    @Column(name = "CVV")
-    private String cvv;
-
-    @Column(name = "EXPIRE_DATE_MONTH")
+    private Integer cvv;
     private String expireDateMonth;
-
-    @Column(name = "EXPIRE_DATE_Year")
     private String expireDateYear;
-
-    @Column(name = "HASH_PASSWORD")
     private String hashPassword;
-
-    @Column(name = "TYPE")
     private CardType type;
 
-    @ManyToOne
-    @JoinColumn(name = "ACCOUNT_ID")
-    private AccountEntity account;
+    public static CardEntity from(CardDTO cardDTO) {
+        CardEntity cardEntity = new ModelMapper().map(cardDTO, CardEntity.class);
+        return cardEntity;
+    }
 
-    @ManyToOne
-    @JoinColumn(name = "CUSTOMER_ID")
-    private CustomerEntity customer;
-
-    public CardEntity() {
+    public static CardDTO to(CardEntity cardEntity) {
+        CardDTO cardDTO = new ModelMapper().map(cardEntity, CardDTO.class);
+        cardDTO.setHashPassword("");
+        return cardDTO;
     }
 
     public Long getId() {
@@ -84,11 +59,11 @@ public class CardEntity extends Auditable<String> {
         this.pin = pin;
     }
 
-    public String getCvv() {
+    public Integer getCvv() {
         return cvv;
     }
 
-    public void setCvv(String cvv) {
+    public void setCvv(Integer cvv) {
         this.cvv = cvv;
     }
 
@@ -122,21 +97,5 @@ public class CardEntity extends Auditable<String> {
 
     public void setType(CardType type) {
         this.type = type;
-    }
-
-    public AccountEntity getAccount() {
-        return account;
-    }
-
-    public void setAccount(AccountEntity account) {
-        this.account = account;
-    }
-
-    public CustomerEntity getCustomer() {
-        return customer;
-    }
-
-    public void setCustomer(CustomerEntity customer) {
-        this.customer = customer;
     }
 }

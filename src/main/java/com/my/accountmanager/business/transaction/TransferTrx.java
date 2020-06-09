@@ -8,9 +8,8 @@ import com.my.accountmanager.domain.entity.TransactionEntity;
 import com.my.accountmanager.domain.enums.TransactionType;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
-import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
+import com.my.accountmanager.model.dto.TransactionDTO;
 import com.my.accountmanager.service.AccountService;
-import com.my.accountmanager.service.DepositService;
 import com.my.accountmanager.service.DocumentService;
 import com.my.accountmanager.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -30,7 +29,7 @@ public class TransferTrx extends ProcessTrx {
     private final Accountant accountant;
     private final AccountService accountService;
     private TrxValidation trxValidation;
-    private TransactionRequestDTO transactionDTO;
+    private TransactionDTO transactionDTO;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -39,7 +38,6 @@ public class TransferTrx extends ProcessTrx {
     public TransferTrx(TransactionService transactionService,
                        DocumentService documentService,
                        AccountService accountService,
-                       DepositService depositService,
                        @Qualifier(value = "transferValidatorAggregator") ValidationAggregator validator,
                        Accountant accountant) {
         this.transactionService = transactionService;
@@ -50,7 +48,7 @@ public class TransferTrx extends ProcessTrx {
     }
 
     @Override
-    public void initiate(TransactionRequestDTO transactionRequest) {
+    public void initiate(TransactionDTO transactionRequest) {
         this.transactionDTO = transactionRequest;
         setTrxValidation(transactionRequest);
     }
@@ -58,13 +56,19 @@ public class TransferTrx extends ProcessTrx {
     @Override
     public void doTransaction() {
         EntityTransaction trx = null;
+        boolean secondTry = false;
         try {
             trx = entityManager.getTransaction();
             createTransaction(trx);
         }catch (NoSuchElementException | IllegalStateException | OptimisticLockException exception) {
-            assert trx != null;
-            trx.rollback();
-            createTransaction(trx);
+            if (trx != null) {
+                trx.rollback();
+            }
+            if (!secondTry) {
+                secondTry = true;
+                trx = entityManager.getTransaction();
+                createTransaction(trx);
+            }
         }
     }
 
@@ -73,11 +77,15 @@ public class TransferTrx extends ProcessTrx {
         return validator.aggregate(this.trxValidation);
     }
 
-    private void createTransaction(EntityTransaction trx) {
+    @Override
+    public void createTransaction(EntityTransaction trx) {
         Optional<AccountEntity> sourceAccountEntity= accountService.getByAccountNumber(transactionDTO.getSourceAccount().getAccountNumber());
         Optional<AccountEntity> destinationAccountNumber = accountService.getByAccountNumber(transactionDTO.getDestinationAccount().getAccountNumber());
         sourceAccountEntity.ifPresent(account -> {
             AccountEntity lockedSourceAccount = entityManager.find(AccountEntity.class, account.getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+            if (destinationAccountNumber.isEmpty()){
+                throw new RuntimeException(); //TODO replace with specific exception
+            }
             AccountEntity lockedDestinationAccount = entityManager.find(AccountEntity.class, destinationAccountNumber.get().getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
             TransactionEntity preparedTransactionEntity = setTransactionEntity(transactionDTO, lockedSourceAccount, lockedDestinationAccount);
             trx.begin();
@@ -93,14 +101,15 @@ public class TransferTrx extends ProcessTrx {
     }
 
     //============================================ Private Method ============================================
-    private void setTrxValidation(TransactionRequestDTO transactionRequestDTO) {
-        this.trxValidation.setSourceAccountNumber(transactionRequestDTO.getSourceAccount().getAccountNumber());
-        this.trxValidation.setDestinationAccountNumber(transactionRequestDTO.getDestinationAccount().getAccountNumber());
-        this.trxValidation.setAmount(transactionRequestDTO.getAmount());
-        this.trxValidation.setTime(transactionRequestDTO.getTime());
+    private void setTrxValidation(TransactionDTO transactionDTO) {
+        this.trxValidation.setSourceAccountNumber(transactionDTO.getSourceAccount().getAccountNumber());
+        this.trxValidation.setDestinationAccountNumber(transactionDTO.getDestinationAccount().getAccountNumber());
+        this.trxValidation.setAmount(transactionDTO.getAmount());
+        this.trxValidation.setTime(transactionDTO.getTime());
+        this.trxValidation.setHashedPassword(transactionDTO.getHashedPassword());
     }
 
-    private TransactionEntity setTransactionEntity(TransactionRequestDTO transactionDTO, AccountEntity sourceAccount, AccountEntity destinationAccount) {
+    private TransactionEntity setTransactionEntity(TransactionDTO transactionDTO, AccountEntity sourceAccount, AccountEntity destinationAccount) {
         TransactionEntity transactionEntity = new TransactionEntity();
         transactionEntity.setType(TransactionType.TRANSFER);
         transactionEntity.setTerminalID(transactionDTO.getTerminalId());

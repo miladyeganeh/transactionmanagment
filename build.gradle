@@ -27,8 +27,13 @@ dependencies {
     implementation 'org.hibernate:hibernate-envers:5.4.17.Final'
     implementation 'javax.validation:validation-api:2.0.0.Final'
     implementation 'com.h2database:h2:1.4.200'
+    implementation 'org.modelmapper:modelmapper:0.7.5'
+    compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
+    compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
+    compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.3.0.RELEASE'
+    compile("org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE") { true }
 
-//    runtimeOnly 'com.h2database:h2'
+    runtimeOnly 'com.h2database:h2'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

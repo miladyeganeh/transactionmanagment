@@ -1,2 +1,3 @@
 spring:
-  profiles: develop
+  profiles:
+    active: docker

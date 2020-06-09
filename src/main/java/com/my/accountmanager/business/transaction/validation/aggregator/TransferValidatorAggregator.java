@@ -17,14 +17,17 @@ public class TransferValidatorAggregator implements ValidationAggregator {
     private final TrxValidator trxDateValidator;
     private final TrxValidator trxFromAccountValidator;
     private final TrxValidator trxDuplicationValidator;
+    private final TrxValidator trxCardValidator;
 
     @Autowired
     public TransferValidatorAggregator(@Qualifier("trxDateValidator") TrxValidator trxDateValidator,
                                        @Qualifier("trxFromAccountValidator") TrxValidator trxFromAccountValidator,
-                                       @Qualifier("trxDuplicationValidator") TrxValidator trxDuplicationValidator) {
+                                       @Qualifier("trxDuplicationValidator") TrxValidator trxDuplicationValidator,
+                                       @Qualifier("trxCardPassValidator") TrxValidator trxCardValidator) {
         this.trxDateValidator = trxDateValidator;
         this.trxFromAccountValidator = trxFromAccountValidator;
         this.trxDuplicationValidator = trxDuplicationValidator;
+        this.trxCardValidator = trxCardValidator;
     }
 
     @Override
@@ -33,7 +36,7 @@ public class TransferValidatorAggregator implements ValidationAggregator {
         trxValidatorMessages.add(trxDateValidator.validate(trxValidation));
         trxValidatorMessages.add(trxFromAccountValidator.validate(trxValidation));
         trxValidatorMessages.add(trxDuplicationValidator.validate(trxValidation));
-
+        trxValidatorMessages.add(trxCardValidator.validate(trxValidation));
         return trxValidatorMessages;
     }
 }

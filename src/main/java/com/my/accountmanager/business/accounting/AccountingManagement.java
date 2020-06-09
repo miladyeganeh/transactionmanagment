@@ -64,7 +64,7 @@ public class AccountingManagement implements Accountant {
     private DocumentEntity createDocument(TransactionEntity transactionEntity) {
         String comment = documentService.createDocumentComment(transactionEntity.getTransactionID(), transactionEntity.getType());
         DocumentEntity documentEntity = new DocumentEntity();
-        documentEntity.setBillNumber("billNumber");
+        documentEntity.setBillNumber("billNumber"); // todo create bill number
         documentEntity.setComment(comment);
         documentEntity.setIssuanceDate(new Date());
         documentEntity.setTotalAmount(transactionEntity.getAmount());

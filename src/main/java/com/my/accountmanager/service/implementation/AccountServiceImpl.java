@@ -1,6 +1,7 @@
 package com.my.accountmanager.service.implementation;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
+import com.my.accountmanager.model.dto.AccountDTO;
 import com.my.accountmanager.repository.AccountRepository;
 import com.my.accountmanager.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,5 +27,16 @@ public class AccountServiceImpl extends BaseCrudServiceImpl<AccountEntity, Accou
     @Override
     public Optional<AccountEntity> getByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber);
+    }
+
+    @Override
+    public AccountDTO persist(AccountDTO accountDTO) {
+        AccountEntity savedAccountEntity = save(AccountDTO.from(accountDTO));
+        return AccountDTO.to(savedAccountEntity);
+    }
+
+    @Override
+    public void evict(AccountEntity accountEntity) {
+        super.delete(accountEntity);
     }
 }

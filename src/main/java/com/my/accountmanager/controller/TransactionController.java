@@ -4,7 +4,7 @@ import com.my.accountmanager.business.transaction.ProcessTrx;
 import com.my.accountmanager.business.transaction.factory.TrxFactory;
 import com.my.accountmanager.domain.enums.TransactionType;
 import com.my.accountmanager.model.TrxValidatorMessages;
-import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
+import com.my.accountmanager.model.dto.TransactionDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +17,7 @@ import java.util.List;
  * @author M.Yeganeh on 01/06/2020.
  */
 @RestController
-@RequestMapping("api/transaction")
+@RequestMapping(value = "api/v1/transactions")
 public class TransactionController {
 
     private TrxFactory trxFactory;
@@ -28,7 +28,7 @@ public class TransactionController {
     }
 
     @PostMapping
-    public void createTransaction(@RequestBody TransactionRequestDTO transactionDTO) {
+    public void createTransaction(@RequestBody TransactionDTO transactionDTO) {
         ProcessTrx processTrx = trxFactory.getInstance(TransactionType.getByValue(transactionDTO.getTransactionType()));
         processTrx.initiate(transactionDTO);
         List<TrxValidatorMessages> validateMessages = processTrx.validate();
