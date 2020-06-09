@@ -7,6 +7,7 @@ public class TransactionDTO {
     private String trxID;
     private Date time;
     private Double amount;
+    private Integer currencyCode;
     private Integer terminalId;
     private Integer transactionType;
     private String cardPAN;
@@ -39,6 +40,14 @@ public class TransactionDTO {
 
     public void setAmount(Double amount) {
         this.amount = amount;
+    }
+
+    public Integer getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(Integer currencyCode) {
+        this.currencyCode = currencyCode;
     }
 
     public Integer getTerminalId() {

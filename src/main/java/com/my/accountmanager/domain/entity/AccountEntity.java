@@ -34,6 +34,9 @@ public class AccountEntity extends Auditable<String> {
     @Column(name = "STATUS")
     private AccountStatus status;
 
+    @OneToOne
+    private CurrencyEntity currency;
+
     @ManyToOne
     @JoinColumn(name = "CUSTOMER_ID")
     private CustomerEntity customer;
@@ -93,6 +96,14 @@ public class AccountEntity extends Auditable<String> {
 
     public void setStatus(AccountStatus status) {
         this.status = status;
+    }
+
+    public CurrencyEntity getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(CurrencyEntity currency) {
+        this.currency = currency;
     }
 
     public CustomerEntity getCustomer() {

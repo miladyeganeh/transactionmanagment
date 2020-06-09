@@ -10,4 +10,5 @@ import com.my.accountmanager.domain.enums.TransactionType;
 public interface DocumentService {
     DocumentEntity createDocument(DocumentEntity documentEntity);
     String createDocumentComment(String transactionID, TransactionType transactionType);
+    String createBillNumber(Integer terminalID, String transactionNumber);
 }

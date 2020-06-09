@@ -15,13 +15,19 @@ import java.time.LocalDate;
 public class AppExceptionHandler {
 
     @ExceptionHandler(value = {AccountServiceException.class})
-    public ResponseEntity<Object> handleUserServiceException(AccountServiceException ex, WebRequest request){
+    public ResponseEntity<ErrorMessage> handleUserServiceException(AccountServiceException ex, WebRequest request){
         ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), LocalDate.now());
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
     @ExceptionHandler(value = {TransactionServiceException.class})
-    public ResponseEntity<Object> handleUserServiceException(TransactionServiceException ex, WebRequest request){
+    public ResponseEntity<ErrorMessage> handleUserServiceException(TransactionServiceException ex, WebRequest request){
+        ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), LocalDate.now());
+        return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
+    }
+
+    @ExceptionHandler(value = {CurrencyServiceException.class})
+    public ResponseEntity<ErrorMessage> handleUserServiceException(CurrencyServiceException ex, WebRequest request){
         ErrorMessage errorMessage = new ErrorMessage(ex.getMessage(), LocalDate.now());
         return new ResponseEntity<>(errorMessage, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR);
     }

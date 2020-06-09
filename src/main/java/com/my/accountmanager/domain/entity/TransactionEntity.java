@@ -1,10 +1,12 @@
 package com.my.accountmanager.domain.entity;
 
 import com.my.accountmanager.domain.enums.TransactionType;
+import com.my.accountmanager.utils.DateUtil;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.UUID;
 
 /**
  * @author M.Yeganeh on 31/05/2020.
@@ -19,7 +21,7 @@ public class TransactionEntity extends Auditable<String> {
     private Long id;
 
     @Column(name = "TRANSACTIONID", unique = true)
-    private String transactionID;
+    private String transactionID = DateUtil.getYearMonthDay() + UUID.randomUUID();
 
     @Column(name = "TERMINALID")
     private Integer terminalID;
@@ -31,6 +33,9 @@ public class TransactionEntity extends Auditable<String> {
     private TransactionType type;
 
     private Date trxDate;
+
+    @OneToOne
+    private CurrencyEntity currency;
 
     @OneToOne
     private AccountEntity sourceAccount;
@@ -96,6 +101,14 @@ public class TransactionEntity extends Auditable<String> {
 
     public void setTrxDate(Date trxDate) {
         this.trxDate = trxDate;
+    }
+
+    public CurrencyEntity getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(CurrencyEntity currency) {
+        this.currency = currency;
     }
 
     public AccountEntity getSourceAccount() {

@@ -24,8 +24,11 @@ public class TrxBalanceValidator implements TrxValidator{
         TrxValidatorMessages trxValidatorMessages = new TrxValidatorMessages();
         Optional<AccountEntity> accountEntity = accountService.getByAccountNumber(validationModel.getSourceAccountNumber());
         accountEntity.ifPresent(account -> {
-            if ((account.getBalance() - validationModel.getAmount()) < 0)
-            trxValidatorMessages.setMessage("Account has not enough balance");
+            if ((account.getBalance() - validationModel.getAmount()) < 0) {
+                trxValidatorMessages.setMessage("Account has not enough balance");
+                trxValidatorMessages.setFailValidation(true);
+            }
+
         });
         return trxValidatorMessages;
     }

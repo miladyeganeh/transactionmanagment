@@ -21,7 +21,10 @@ public class DocumentIssuanceValidatorAggregator implements ValidationAggregator
     @Override
     public List<TrxValidatorMessages> aggregate(TrxValidation trxValidation) {
         List<TrxValidatorMessages> trxValidatorMessages = new ArrayList<>();
-        trxValidatorMessages.add(trxBalanceValidator.validate(trxValidation));
+        TrxValidatorMessages trxBalanceValidator = this.trxBalanceValidator.validate(trxValidation);
+        if (trxBalanceValidator.getFailValidation()) {
+            trxValidatorMessages.add(trxBalanceValidator);
+        }
         return trxValidatorMessages;
     }
 }

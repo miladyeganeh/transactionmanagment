@@ -29,10 +29,18 @@ public class DepositValidatorAggregator implements ValidationAggregator{
     @Override
     public List<TrxValidatorMessages> aggregate(TrxValidation trxValidation) {
         List<TrxValidatorMessages> trxValidatorMessages = new ArrayList<>();
-        trxValidatorMessages.add(this.trxDateValidator.validate(trxValidation));
-        trxValidatorMessages.add(this.trxDuplicationValidator.validate(trxValidation));
-        trxValidatorMessages.add(this.trxFromAccountValidator.validate(trxValidation));
-
+        TrxValidatorMessages dateValidator = this.trxDateValidator.validate(trxValidation);
+        if (dateValidator.getFailValidation()) {
+            trxValidatorMessages.add(dateValidator);
+        }
+        TrxValidatorMessages trxDuplicationValidator = this.trxDuplicationValidator.validate(trxValidation);
+        if (trxDuplicationValidator.getFailValidation()) {
+            trxValidatorMessages.add(trxDuplicationValidator);
+        }
+        TrxValidatorMessages fromAccountValidator = this.trxFromAccountValidator.validate(trxValidation);
+        if (fromAccountValidator.getFailValidation()) {
+            trxValidatorMessages.add(fromAccountValidator);
+        }
         return trxValidatorMessages;
     }
 }

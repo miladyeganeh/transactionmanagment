@@ -4,6 +4,8 @@ import com.my.accountmanager.domain.entity.DocumentEntity;
 import com.my.accountmanager.domain.enums.TransactionType;
 import com.my.accountmanager.repository.DocumentRepository;
 import com.my.accountmanager.service.DocumentService;
+import com.my.accountmanager.utils.DateUtil;
+import com.my.accountmanager.utils.GlobalConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,5 +31,16 @@ public class DocumentServiceImpl extends BaseCrudServiceImpl<DocumentEntity, Doc
         comment.append("Document is issued for transfer transaction with transactionID: ");
         comment.append(transactionID);
         return comment.toString();
+    }
+
+    @Override
+    public String createBillNumber(Integer terminalID, String transactionNumber) {
+        StringBuilder billNumber = new StringBuilder();
+        billNumber.append(DateUtil.getYearMonthDay())
+                .append(GlobalConstant.ASTRIX)
+                .append(terminalID)
+                .append(GlobalConstant.ASTRIX)
+                .append(transactionNumber);
+        return billNumber.toString();
     }
 }

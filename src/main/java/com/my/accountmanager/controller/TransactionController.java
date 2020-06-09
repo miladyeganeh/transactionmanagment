@@ -15,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -41,10 +41,10 @@ public class TransactionController {
         ResponseDTO<TransactionResponseDTO> response = new ResponseDTO<>();
         transaction.ifPresent(trx -> {
             response.setData(TransactionResponseDTO.to(trx));
-            response.setDate(new Date());
+            response.setDate(LocalDate.now());
         });
         if (response.getData() == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
@@ -52,18 +52,19 @@ public class TransactionController {
     @PostMapping
     public ResponseEntity<ResponseDTO<TransactionResponseDTO>> createTransaction(@RequestBody TransactionDTO transactionDTO) {
         TransactionEntity transactionEntity;
-        ResponseDTO<TransactionResponseDTO> response = null;
+        ResponseDTO<TransactionResponseDTO> response = new ResponseDTO<>();
         ProcessTrx processTrx = trxFactory.getInstance(TransactionType.getByValue(transactionDTO.getTransactionType()));
         processTrx.initiate(transactionDTO);
         List<TrxValidatorMessages> validateMessages = processTrx.validate();
         if (validateMessages.isEmpty()) {
             try{
                 transactionEntity = processTrx.doTransaction();
-                response = new ResponseDTO<>();
                 response.setData(TransactionResponseDTO.to(transactionEntity));
-                response.setDate(new Date());
-            }catch (AccountServiceException exception) {
-                return ResponseEntity.status(HttpStatus.NOT_ACCEPTABLE).body(null);
+                response.setDate(LocalDate.now());
+            } catch (AccountServiceException exception) {
+                response.setMessage(exception.getMessage());
+                response.setDate(LocalDate.now());
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
             }
         }
         return ResponseEntity.status(HttpStatus.OK).body(response);

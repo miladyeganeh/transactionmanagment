@@ -2,12 +2,12 @@ package com.my.accountmanager.model.dto.response;
 
 import com.my.accountmanager.model.enums.ResponseCode;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class ResponseDTO<T> {
     private String message;
     private ResponseCode code;
-    private Date date;
+    private LocalDate date;
     private T data;
 
     public String getMessage() {
@@ -26,11 +26,11 @@ public class ResponseDTO<T> {
         this.code = code;
     }
 
-    public Date getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 

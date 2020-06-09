@@ -1,5 +1,6 @@
 package com.my.accountmanager.controller;
 
+import com.my.accountmanager.model.dto.CurrencyThirdParty;
 import com.my.accountmanager.service.CurrencyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;

@@ -1,17 +1,20 @@
 package com.my.accountmanager.business.transaction;
 
-import com.my.accountmanager.business.accounting.Accountant;
+import com.my.accountmanager.business.accounting.AccountantService;
 import com.my.accountmanager.business.transaction.validation.aggregator.ValidationAggregator;
 import com.my.accountmanager.domain.entity.AccountEntity;
+import com.my.accountmanager.domain.entity.CurrencyEntity;
 import com.my.accountmanager.domain.entity.DepositEntity;
 import com.my.accountmanager.domain.entity.TransactionEntity;
 import com.my.accountmanager.domain.enums.TransactionType;
 import com.my.accountmanager.exception.AccountServiceException;
+import com.my.accountmanager.exception.CurrencyServiceException;
 import com.my.accountmanager.exception.configuration.TransactionServiceException;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import com.my.accountmanager.model.dto.TransactionDTO;
 import com.my.accountmanager.service.AccountService;
+import com.my.accountmanager.service.CurrencyService;
 import com.my.accountmanager.service.DocumentService;
 import com.my.accountmanager.service.TransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,10 +31,11 @@ import java.util.*;
 public class TransferTrx extends ProcessTrx {
 
     private final ValidationAggregator validator;
-    private final Accountant accountant;
+    private final AccountantService accountantService;
     private final AccountService accountService;
-    private TrxValidation trxValidation;
+    private final CurrencyService currencyService;
     private TransactionDTO transactionDTO;
+    TrxValidation trxValidation;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -41,43 +45,49 @@ public class TransferTrx extends ProcessTrx {
                        DocumentService documentService,
                        AccountService accountService,
                        @Qualifier(value = "transferValidatorAggregator") ValidationAggregator validator,
-                       Accountant accountant) {
+                       AccountantService accountantService,
+                       CurrencyService currencyService) {
         this.transactionService = transactionService;
         this.documentService = documentService;
         this.accountService = accountService;
+        this.currencyService = currencyService;
         this.validator = validator;
-        this.accountant = accountant;
+        this.accountantService = accountantService;
     }
 
     @Override
-    public void initiate(TransactionDTO transactionRequest) {
-        this.transactionDTO = transactionRequest;
-        setTrxValidation(transactionRequest);
-    }
-
-    @Override
-    public TransactionEntity doTransaction() {
-        EntityTransaction trx = null;
-        boolean secondTry = false;
-        try {
-            trx = entityManager.getTransaction();
-            return createTransaction(trx);
-        } catch (NoSuchElementException | IllegalStateException | OptimisticLockException exception) {
-            if (trx != null) {
-                trx.rollback();
-            }
-            if (!secondTry) {
-                secondTry = true;
-                trx = entityManager.getTransaction();
-                return createTransaction(trx);
-            }
-            throw new TransactionServiceException("Required transaction can not be process"); //ToDo replace with specific exception
-        }
+    public void initiate(TransactionDTO transactionDTO) {
+        this.transactionDTO = transactionDTO;
+        this.setTrxValidation(transactionDTO);
     }
 
     @Override
     public List<TrxValidatorMessages> validate() {
         return validator.aggregate(this.trxValidation);
+    }
+
+    @Override
+    public TransactionEntity doTransaction() {
+        boolean needSecondTry = true;
+        EntityTransaction trx = null;
+        try {
+            trx = entityManager.getTransaction();
+            TransactionEntity transaction = createTransaction(trx);
+            needSecondTry = false;
+            return transaction;
+        } catch (TransactionServiceException | AccountServiceException | CurrencyServiceException ex) {
+            if (trx != null) {
+                trx.rollback();
+            }
+            if (needSecondTry) {
+                needSecondTry = false;
+                trx = entityManager.getTransaction();
+                return createTransaction(trx);
+            }
+            throw new TransactionServiceException(ex.getMessage());
+        } catch (NoSuchElementException | IllegalStateException | OptimisticLockException ex2) {
+            throw new TransactionServiceException("transaction cannot be processed");
+        }
     }
 
     @Override
@@ -96,11 +106,11 @@ public class TransferTrx extends ProcessTrx {
             TransactionEntity preparedTransactionEntity = setTransactionEntity(transactionDTO, lockedSourceAccount, lockedDestinationAccount);
             trx.begin();
             transaction = transactionService.createTransaction(preparedTransactionEntity);
-            List<TrxValidatorMessages> trxValidatorMessages = accountant.issueDocument(lockedSourceAccount, lockedDestinationAccount, transaction);
-            accountService.save(lockedSourceAccount);
-            accountService.save(lockedDestinationAccount);
+            accountantService.initiate(this.trxValidation);
+            List<TrxValidatorMessages> trxValidatorMessages = accountantService.issueDocument(lockedSourceAccount, lockedDestinationAccount, transaction);
             if (!trxValidatorMessages.isEmpty()) {
                 trx.rollback();
+                throw new TransactionServiceException("Has not enough balance");
             }
             trx.commit();
         }
@@ -116,10 +126,12 @@ public class TransferTrx extends ProcessTrx {
         this.trxValidation.setHashedPassword(transactionDTO.getHashedPassword());
     }
 
-    private TransactionEntity setTransactionEntity(TransactionDTO transactionDTO, AccountEntity sourceAccount, AccountEntity destinationAccount) {
+    private TransactionEntity setTransactionEntity(TransactionDTO transactionDTO, AccountEntity sourceAccount, AccountEntity destinationAccount) throws RuntimeException {
         TransactionEntity transactionEntity = new TransactionEntity();
-        transactionEntity.setType(TransactionType.TRANSFER);
         transactionEntity.setTerminalID(transactionDTO.getTerminalId());
+        Optional<CurrencyEntity> currencyEntity = currencyService.getCurrencyByCode(transactionDTO.getCurrencyCode());
+        currencyEntity.ifPresentOrElse(transactionEntity::setCurrency, () -> {throw new CurrencyServiceException("Can not find your currency");});
+        transactionEntity.setType(TransactionType.TRANSFER);
         transactionEntity.setTrxDate(new Date());
         transactionEntity.setAmount(transactionDTO.getAmount());
         transactionEntity.setSourceAccount(sourceAccount);

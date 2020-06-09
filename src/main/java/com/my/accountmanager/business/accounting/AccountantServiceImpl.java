@@ -9,46 +9,60 @@ import com.my.accountmanager.domain.enums.DocumentStatus;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import com.my.accountmanager.service.AccountService;
-import com.my.accountmanager.service.DocumentItemService;
+import com.my.accountmanager.service.CurrencyService;
 import com.my.accountmanager.service.DocumentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Service
-public class AccountingManagement implements Accountant {
+public class AccountantServiceImpl implements AccountantService {
 
-    private DocumentService documentService;
-    private DocumentItemService documentItemService;
-    private ValidationAggregator validator;
+    private final DocumentService documentService;
+    private final AccountService accountService;
+    private final CurrencyService currencyService;
+    private final ValidationAggregator validator;
     private TrxValidation trxValidation;
 
     @Autowired
-    public AccountingManagement(DocumentService documentService,
-                                DocumentItemService documentItemService,
-                                AccountService accountService) {
+    public AccountantServiceImpl(DocumentService documentService,
+                                 AccountService accountService,
+                                 CurrencyService currencyService,
+                                 @Qualifier("documentIssuanceValidatorAggregator") ValidationAggregator validator) {
         this.documentService = documentService;
-        this.documentItemService = documentItemService;
+        this.accountService = accountService;
+        this.currencyService = currencyService;
+        this.validator = validator;
     }
 
     @Override
+    public void initiate(TrxValidation trxValidation) {
+        this.trxValidation = trxValidation;
+    }
+
+
+    @Override
     public List<TrxValidatorMessages> issueDocument(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity) {
-        List<TrxValidatorMessages> validateMessages = validate();
-        if (!validateMessages.isEmpty())
+        List<TrxValidatorMessages> validateMessages = this.validate();
+        if (!validateMessages.isEmpty()) {
             return validateMessages;
+        }
+        this.calculate(sourceAccount, destinationAccount, transactionEntity);
         documentService.createDocument(createDocument(transactionEntity));
+        accountService.save(sourceAccount);
+        accountService.save(destinationAccount);
         return validateMessages;
     }
 
     @Override
     public void calculate(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity) {
-        Double newAmount = sourceAccount.getBalance() - transactionEntity.getAmount();
+        Map<String, Double> rates = this.currencyService.getRate().getRates();
+        Double exchangeRate = rates.get(transactionEntity.getCurrency().getName());
+        double newAmount = (sourceAccount.getBalance() * exchangeRate) - transactionEntity.getAmount();
         sourceAccount.setBalance(newAmount);
-        destinationAccount.setBalance(destinationAccount.getBalance() + newAmount);
+        destinationAccount.setBalance((destinationAccount.getBalance() * exchangeRate) + newAmount);
     }
 
     @Override
@@ -64,7 +78,7 @@ public class AccountingManagement implements Accountant {
     private DocumentEntity createDocument(TransactionEntity transactionEntity) {
         String comment = documentService.createDocumentComment(transactionEntity.getTransactionID(), transactionEntity.getType());
         DocumentEntity documentEntity = new DocumentEntity();
-        documentEntity.setBillNumber("billNumber"); // todo create bill number
+        documentEntity.setBillNumber(documentService.createBillNumber(transactionEntity.getTerminalID(), transactionEntity.getTransactionID()));
         documentEntity.setComment(comment);
         documentEntity.setIssuanceDate(new Date());
         documentEntity.setTotalAmount(transactionEntity.getAmount());

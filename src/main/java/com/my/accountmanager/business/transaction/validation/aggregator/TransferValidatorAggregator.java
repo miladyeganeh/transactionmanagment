@@ -33,21 +33,21 @@ public class TransferValidatorAggregator implements ValidationAggregator {
     @Override
     public List<TrxValidatorMessages> aggregate(TrxValidation trxValidation) {
         List<TrxValidatorMessages> trxValidatorMessages = new ArrayList<>();
-        TrxValidatorMessages validDate = trxDateValidator.validate(trxValidation);
-        if (validDate.getFailValidation()) {
-            trxValidatorMessages.add(validDate);
+        TrxValidatorMessages trxDateValidator = this.trxDateValidator.validate(trxValidation);
+        if (trxDateValidator.getFailValidation()) {
+            trxValidatorMessages.add(trxDateValidator);
         }
-        TrxValidatorMessages validateFrom = trxFromAccountValidator.validate(trxValidation);
-        if (validateFrom.getFailValidation()) {
-            trxValidatorMessages.add(validateFrom);
+        TrxValidatorMessages trxFromAccountValidator = this.trxFromAccountValidator.validate(trxValidation);
+        if (trxFromAccountValidator.getFailValidation()) {
+            trxValidatorMessages.add(trxFromAccountValidator);
         }
-        TrxValidatorMessages duplicationValidator = trxDuplicationValidator.validate(trxValidation);
-        if (duplicationValidator.getFailValidation()) {
-            trxValidatorMessages.add(duplicationValidator);
+        TrxValidatorMessages trxDuplicationValidator = this.trxDuplicationValidator.validate(trxValidation);
+        if (trxDuplicationValidator.getFailValidation()) {
+            trxValidatorMessages.add(trxDuplicationValidator);
         }
-        TrxValidatorMessages cardValidator = trxCardValidator.validate(trxValidation);
-        if (cardValidator.getFailValidation()) {
-            trxValidatorMessages.add(cardValidator);
+        TrxValidatorMessages trxCardValidator = this.trxCardValidator.validate(trxValidation);
+        if (trxCardValidator.getFailValidation()) {
+            trxValidatorMessages.add(trxCardValidator);
         }
         return trxValidatorMessages;
     }
