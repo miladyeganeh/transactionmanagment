@@ -1,6 +1,7 @@
 package com.my.accountmanager.business.transaction;
 
 import com.my.accountmanager.business.transaction.validation.aggregator.ValidationAggregator;
+import com.my.accountmanager.domain.entity.TransactionEntity;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import com.my.accountmanager.model.dto.TransactionDTO;
@@ -10,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
+import javax.persistence.EntityTransaction;
 import java.util.List;
 
 @Component("withdrawTrx")
@@ -33,8 +35,13 @@ public class WithdrawTrx extends ProcessTrx {
     }
 
     @Override
-    public void doTransaction() {
+    public TransactionEntity doTransaction() {
+        return null;
+    }
 
+    @Override
+    protected TransactionEntity createTransaction(EntityTransaction trx) {
+        return null;
     }
 
     @Override

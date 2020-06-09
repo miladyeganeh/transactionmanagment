@@ -25,6 +25,7 @@ public class TrxDuplicationValidator implements TrxValidator {
         Optional<TransactionEntity> duplicatedTrx = transactionService.getByTransactionID(validationModel.getTrxID());
         duplicatedTrx.ifPresent(trx -> {
             trxValidatorMessages.setMessage("Duplicate transaction...");
+            trxValidatorMessages.setFailValidation(true);
         });
         return trxValidatorMessages;
     }

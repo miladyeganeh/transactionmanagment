@@ -33,10 +33,22 @@ public class TransferValidatorAggregator implements ValidationAggregator {
     @Override
     public List<TrxValidatorMessages> aggregate(TrxValidation trxValidation) {
         List<TrxValidatorMessages> trxValidatorMessages = new ArrayList<>();
-        trxValidatorMessages.add(trxDateValidator.validate(trxValidation));
-        trxValidatorMessages.add(trxFromAccountValidator.validate(trxValidation));
-        trxValidatorMessages.add(trxDuplicationValidator.validate(trxValidation));
-        trxValidatorMessages.add(trxCardValidator.validate(trxValidation));
+        TrxValidatorMessages validDate = trxDateValidator.validate(trxValidation);
+        if (validDate.getFailValidation()) {
+            trxValidatorMessages.add(validDate);
+        }
+        TrxValidatorMessages validateFrom = trxFromAccountValidator.validate(trxValidation);
+        if (validateFrom.getFailValidation()) {
+            trxValidatorMessages.add(validateFrom);
+        }
+        TrxValidatorMessages duplicationValidator = trxDuplicationValidator.validate(trxValidation);
+        if (duplicationValidator.getFailValidation()) {
+            trxValidatorMessages.add(duplicationValidator);
+        }
+        TrxValidatorMessages cardValidator = trxCardValidator.validate(trxValidation);
+        if (cardValidator.getFailValidation()) {
+            trxValidatorMessages.add(cardValidator);
+        }
         return trxValidatorMessages;
     }
 }

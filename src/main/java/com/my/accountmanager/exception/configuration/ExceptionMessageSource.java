@@ -1,4 +1,4 @@
-package com.my.accountmanager.exception;
+package com.my.accountmanager.exception.configuration;
 
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 

@@ -6,6 +6,8 @@ import com.my.accountmanager.domain.entity.AccountEntity;
 import com.my.accountmanager.domain.entity.DepositEntity;
 import com.my.accountmanager.domain.entity.TransactionEntity;
 import com.my.accountmanager.domain.enums.TransactionType;
+import com.my.accountmanager.exception.AccountServiceException;
+import com.my.accountmanager.exception.configuration.TransactionServiceException;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import com.my.accountmanager.model.dto.TransactionDTO;
@@ -54,21 +56,22 @@ public class TransferTrx extends ProcessTrx {
     }
 
     @Override
-    public void doTransaction() {
+    public TransactionEntity doTransaction() {
         EntityTransaction trx = null;
         boolean secondTry = false;
         try {
             trx = entityManager.getTransaction();
-            createTransaction(trx);
-        }catch (NoSuchElementException | IllegalStateException | OptimisticLockException exception) {
+            return createTransaction(trx);
+        } catch (NoSuchElementException | IllegalStateException | OptimisticLockException exception) {
             if (trx != null) {
                 trx.rollback();
             }
             if (!secondTry) {
                 secondTry = true;
                 trx = entityManager.getTransaction();
-                createTransaction(trx);
+                return createTransaction(trx);
             }
+            throw new TransactionServiceException("Required transaction can not be process"); //ToDo replace with specific exception
         }
     }
 
@@ -78,18 +81,21 @@ public class TransferTrx extends ProcessTrx {
     }
 
     @Override
-    public void createTransaction(EntityTransaction trx) {
-        Optional<AccountEntity> sourceAccountEntity= accountService.getByAccountNumber(transactionDTO.getSourceAccount().getAccountNumber());
+    public TransactionEntity createTransaction(EntityTransaction trx) {
+        TransactionEntity transaction;
+        Optional<AccountEntity> sourceAccountEntity = accountService.getByAccountNumber(transactionDTO.getSourceAccount().getAccountNumber());
         Optional<AccountEntity> destinationAccountNumber = accountService.getByAccountNumber(transactionDTO.getDestinationAccount().getAccountNumber());
-        sourceAccountEntity.ifPresent(account -> {
-            AccountEntity lockedSourceAccount = entityManager.find(AccountEntity.class, account.getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
-            if (destinationAccountNumber.isEmpty()){
-                throw new RuntimeException(); //TODO replace with specific exception
+        if (sourceAccountEntity.isEmpty()) {
+            throw new AccountServiceException("Source Account is invalid");
+        } else {
+            if (destinationAccountNumber.isEmpty()) {
+                throw new AccountServiceException("Destination Account is invalid");
             }
+            AccountEntity lockedSourceAccount = entityManager.find(AccountEntity.class, sourceAccountEntity.get().getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
             AccountEntity lockedDestinationAccount = entityManager.find(AccountEntity.class, destinationAccountNumber.get().getId(), LockModeType.OPTIMISTIC_FORCE_INCREMENT);
             TransactionEntity preparedTransactionEntity = setTransactionEntity(transactionDTO, lockedSourceAccount, lockedDestinationAccount);
             trx.begin();
-            TransactionEntity transaction = transactionService.createTransaction(preparedTransactionEntity);
+            transaction = transactionService.createTransaction(preparedTransactionEntity);
             List<TrxValidatorMessages> trxValidatorMessages = accountant.issueDocument(lockedSourceAccount, lockedDestinationAccount, transaction);
             accountService.save(lockedSourceAccount);
             accountService.save(lockedDestinationAccount);
@@ -97,7 +103,8 @@ public class TransferTrx extends ProcessTrx {
                 trx.rollback();
             }
             trx.commit();
-        });
+        }
+        return transaction;
     }
 
     //============================================ Private Method ============================================

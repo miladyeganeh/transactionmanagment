@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 @Component("trxCardPassValidator")
-public class TrxCardValidator implements TrxValidator{
+public class TrxCardValidator implements TrxValidator {
 
     private final CardService cardService;
 
@@ -18,9 +18,11 @@ public class TrxCardValidator implements TrxValidator{
 
     @Override
     public TrxValidatorMessages validate(TrxValidation validationModel) {
-        cardService.isValidCardForPayment(validationModel);
         TrxValidatorMessages trxValidatorMessages = new TrxValidatorMessages();
-        trxValidatorMessages.setMessage("Invalid card");
+        if (cardService.isValidCardForPayment(validationModel)) {
+            trxValidatorMessages.setMessage("Invalid card");
+            trxValidatorMessages.setFailValidation(true);
+        }
         return trxValidatorMessages;
     }
 }

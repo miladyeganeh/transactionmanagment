@@ -1,6 +1,7 @@
 package com.my.accountmanager.business.transaction;
 
 import com.my.accountmanager.business.transaction.validation.aggregator.ValidationAggregator;
+import com.my.accountmanager.domain.entity.TransactionEntity;
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import com.my.accountmanager.model.dto.TransactionDTO;
@@ -34,13 +35,13 @@ public class DepositTrx extends ProcessTrx {
     }
 
     @Override
-    public void doTransaction() {
-
+    public TransactionEntity doTransaction() {
+        return null;
     }
 
     @Override
-    protected void createTransaction(EntityTransaction trx) {
-
+    protected TransactionEntity createTransaction(EntityTransaction trx) {
+        return null;
     }
 
     @Override

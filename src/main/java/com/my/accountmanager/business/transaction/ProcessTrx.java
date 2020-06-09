@@ -1,5 +1,6 @@
 package com.my.accountmanager.business.transaction;
 
+import com.my.accountmanager.domain.entity.TransactionEntity;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import com.my.accountmanager.model.dto.TransactionDTO;
 import com.my.accountmanager.service.DocumentService;
@@ -18,6 +19,6 @@ public abstract class ProcessTrx {
 
      public abstract void initiate(TransactionDTO transactionRequestDTO);
      public abstract List<TrxValidatorMessages> validate();
-     public abstract void doTransaction();
-     protected abstract void createTransaction(EntityTransaction trx);
+     public abstract TransactionEntity doTransaction();
+     protected abstract TransactionEntity createTransaction(EntityTransaction trx);
 }

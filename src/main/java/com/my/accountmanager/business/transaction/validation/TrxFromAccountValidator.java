@@ -27,6 +27,7 @@ public class TrxFromAccountValidator implements TrxValidator{
         accountEntity.ifPresent(account -> {
             if (account.getIsActive() && account.getStatus().equals(AccountStatus.SUSPEND)) {
                 trxValidatorMessages.setMessage("Account is not active");
+                trxValidatorMessages.setFailValidation(true);
             }
         });
         return trxValidatorMessages;
