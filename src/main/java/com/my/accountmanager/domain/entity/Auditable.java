@@ -11,7 +11,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Temporal;
 import javax.persistence.Version;
-
 import java.io.Serializable;
 import java.util.Date;
 
@@ -85,5 +84,4 @@ public abstract class Auditable<U> implements Serializable {
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
-
 }

@@ -6,7 +6,12 @@ import java.util.stream.Collectors;
 
 public enum ResponseCode {
     SUCCESS(1),
-    FAIL(2);
+    FAIL(2),
+    NOT_FOUND_CONTENT(3),
+    FOUND_CONTENT(4),
+    VALIDATION_FAILED(5),
+    INTERNAL_ERROR(6),
+    DELETED(7);
 
     private final int value;
 

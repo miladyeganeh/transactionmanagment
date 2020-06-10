@@ -4,6 +4,14 @@ public class TrxValidatorMessages {
     private String message;
     private boolean failValidation;
 
+    public TrxValidatorMessages() {
+    }
+
+    public TrxValidatorMessages(String message, boolean failValidation) {
+        this.message = message;
+        this.failValidation = failValidation;
+    }
+
     public String getMessage() {
         return message;
     }

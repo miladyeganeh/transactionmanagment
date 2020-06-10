@@ -13,6 +13,8 @@ import com.my.accountmanager.exception.configuration.TransactionServiceException
 import com.my.accountmanager.model.TrxValidation;
 import com.my.accountmanager.model.TrxValidatorMessages;
 import com.my.accountmanager.model.dto.TransactionDTO;
+import com.my.accountmanager.model.dto.response.ResponseDTO;
+import com.my.accountmanager.model.dto.response.TransactionResponseDTO;
 import com.my.accountmanager.service.AccountService;
 import com.my.accountmanager.service.CurrencyService;
 import com.my.accountmanager.service.DocumentService;
@@ -67,14 +69,17 @@ public class TransferTrx extends ProcessTrx {
     }
 
     @Override
-    public TransactionEntity doTransaction() {
+    public ResponseDTO<TransactionResponseDTO> doTransaction() {
         boolean needSecondTry = true;
+        ResponseDTO<TransactionResponseDTO> responseDTO = new ResponseDTO<>();
+        TransactionEntity transaction;
         EntityTransaction trx = null;
         try {
             trx = entityManager.getTransaction();
-            TransactionEntity transaction = createTransaction(trx);
+            transaction = createTransaction(trx);
             needSecondTry = false;
-            return transaction;
+            responseDTO.setData(TransactionResponseDTO.to(transaction));
+            return responseDTO;
         } catch (TransactionServiceException | AccountServiceException | CurrencyServiceException ex) {
             if (trx != null) {
                 trx.rollback();
@@ -82,9 +87,12 @@ public class TransferTrx extends ProcessTrx {
             if (needSecondTry) {
                 needSecondTry = false;
                 trx = entityManager.getTransaction();
-                return createTransaction(trx);
+                transaction = createTransaction(trx);
+                responseDTO.setData(TransactionResponseDTO.to(transaction));
+                return responseDTO;
             }
-            throw new TransactionServiceException(ex.getMessage());
+            responseDTO.getData().setErrorList(generateErrorList(ex.getMessage()));
+            return responseDTO;
         } catch (NoSuchElementException | IllegalStateException | OptimisticLockException ex2) {
             throw new TransactionServiceException("transaction cannot be processed");
         }
@@ -148,4 +156,9 @@ public class TransferTrx extends ProcessTrx {
                 .orElse(depositEntity.stream()
                         .findFirst().orElseThrow());
     }
+
+    private List<TrxValidatorMessages> generateErrorList(String message) {
+        return Collections.singletonList(new TrxValidatorMessages(message, true));
+    }
+
 }

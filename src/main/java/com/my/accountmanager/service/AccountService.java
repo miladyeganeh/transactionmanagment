@@ -1,7 +1,6 @@
 package com.my.accountmanager.service;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
-import com.my.accountmanager.model.dto.AccountDTO;
 
 import java.util.Optional;
 
@@ -12,6 +11,5 @@ public interface AccountService {
     Optional<AccountEntity> getByAccountNumber(String accountNumber);
     Optional<AccountEntity> getById(Long id);
     AccountEntity save(AccountEntity accountEntity);
-    AccountDTO persist(AccountDTO accountRequestDTO);
     void evict(AccountEntity accountEntity);
 }

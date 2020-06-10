@@ -29,13 +29,7 @@ public class DocumentItemEntity extends Auditable<String> {
     @ManyToOne
     private DocumentEntity document;
 
-    public Date getIssuanceDate() {
-        return issuanceDate;
-    }
 
-    public void setIssuanceDate(Date issuanceDate) {
-        this.issuanceDate = issuanceDate;
-    }
 
     public Double getAmount() {
         return amount;
@@ -70,5 +64,13 @@ public class DocumentItemEntity extends Auditable<String> {
 
     public void setDocument(DocumentEntity document) {
         this.document = document;
+    }
+
+    public Date getIssuanceDate() {
+        return issuanceDate;
+    }
+
+    public void setIssuanceDate(Date issuanceDate) {
+        this.issuanceDate = issuanceDate;
     }
 }

@@ -82,6 +82,14 @@ public class AccountEntity extends Auditable<String> {
         this.openingDate = openingDate;
     }
 
+    public boolean isActive() {
+        return isActive;
+    }
+
+    public void setActive(boolean active) {
+        isActive = active;
+    }
+
     public boolean getIsActive() {
         return isActive;
     }
