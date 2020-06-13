@@ -3,29 +3,27 @@ package com.my.accountmanager.service.implementation;
 import com.my.accountmanager.service.BaseCrudService;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
  * @author M.Yeganeh on 31/05/2020.
  */
-//todo making Id type to generic
 public abstract class BaseCrudServiceImpl<T, R extends JpaRepository<T, Long>> implements BaseCrudService<T> {
-    private R repository;
+    protected R repository;
 
     public BaseCrudServiceImpl(R repository) {
         this.repository = repository;
     }
 
     @Override
-    public T save(T obj){
-        repository.save(obj);
-        return obj;
+    public T save(T obj) {
+        return repository.save(obj);
     }
 
     @Override
     public T update(T obj){
-        repository.save(obj);
-        return obj;
+        return repository.save(obj);
     }
 
     @Override
@@ -35,12 +33,12 @@ public abstract class BaseCrudServiceImpl<T, R extends JpaRepository<T, Long>> i
     }
 
     @Override
-    public Optional<T> getById(Long id){
+    public Optional<T> findById(Long id){
         return repository.findById(id);
     }
 
     @Override
-    public Iterable<T> getAll(){
+    public List<T> getAll() {
         return repository.findAll();
     }
 }

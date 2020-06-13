@@ -1,24 +1,38 @@
 package com.my.accountmanager.model.dto;
 
 import com.my.accountmanager.domain.entity.CustomerEntity;
-import org.modelmapper.ModelMapper;
 
-public class CustomerDTO {
+import java.io.Serializable;
+
+public class CustomerDTO implements Serializable {
 
     private Long id;
+    private String nationalId;
     private String firstName;
     private String lastName;
     private String customerNumber;
     private String email;
     private String address;
 
-    public static CustomerEntity from(CustomerDTO customerDTO) {
-        CustomerEntity customerEntity = new ModelMapper().map(customerDTO, CustomerEntity.class);
+    public static CustomerEntity to(CustomerDTO customerDTO) {
+        CustomerEntity customerEntity = new CustomerEntity();
+        customerEntity.setId(customerDTO.getId());
+        customerEntity.setNationalId(customerDTO.getNationalId());
+        customerEntity.setCustomerNumber(customerDTO.getCustomerNumber());
+        customerEntity.setFirstName(customerDTO.getFirstName());
+        customerEntity.setLastName(customerDTO.getLastName());
+        customerEntity.setEmail(customerDTO.getEmail());
         return customerEntity;
     }
 
-    public static CustomerDTO to(CustomerEntity customerEntity) {
-        CustomerDTO customerDTO = new ModelMapper().map(customerEntity, CustomerDTO.class);
+    public static CustomerDTO from(CustomerEntity customerEntity) {
+        CustomerDTO customerDTO = new CustomerDTO();
+        customerDTO.setId(customerEntity.getId());
+        customerDTO.setNationalId(customerEntity.getNationalId());
+        customerDTO.setCustomerNumber(customerEntity.getCustomerNumber());
+        customerDTO.setFirstName(customerEntity.getFirstName());
+        customerDTO.setLastName(customerEntity.getLastName());
+        customerDTO.setEmail(customerEntity.getEmail());
         return customerDTO;
     }
 
@@ -28,6 +42,14 @@ public class CustomerDTO {
 
     public void setId(Long id) {
         this.id = id;
+    }
+
+    public String getNationalId() {
+        return nationalId;
+    }
+
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId;
     }
 
     public String getFirstName() {

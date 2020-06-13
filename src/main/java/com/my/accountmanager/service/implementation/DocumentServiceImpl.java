@@ -6,6 +6,8 @@ import com.my.accountmanager.repository.DocumentRepository;
 import com.my.accountmanager.service.DocumentService;
 import com.my.accountmanager.utils.DateUtil;
 import com.my.accountmanager.utils.GlobalConstant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,32 +17,37 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class DocumentServiceImpl extends BaseCrudServiceImpl<DocumentEntity, DocumentRepository> implements DocumentService {
+    private static final Logger logger = LoggerFactory.getLogger(DocumentServiceImpl.class);
+
     @Autowired
     public DocumentServiceImpl(DocumentRepository repository) {
         super(repository);
     }
 
-    @Override
-    public DocumentEntity createDocument(DocumentEntity documentEntity) {
-        return super.save(documentEntity);
-    }
+//    @Override
+//    public DocumentEntity createDocument(DocumentEntity documentEntity) {
+//        logger.info(":::::Start createDocument, transactionId: " + documentEntity.getTransaction().getTransactionID());
+//        DocumentEntity saveDocument = super.save(documentEntity);
+//        logger.info(":::::Start createDocument.");
+//        return saveDocument;
+//    }
 
     @Override
     public String createDocumentComment(String transactionID, TransactionType transactionType) {
-        StringBuilder comment = new StringBuilder();
-        comment.append("Document is issued for transfer transaction with transactionID: ");
-        comment.append(transactionID);
-        return comment.toString();
+        logger.info(":::::Start createDocumentComment, transactionId: " + transactionID);
+        String comment = "Document is issued for transfer transaction with transactionID: " +
+                transactionID;
+        logger.info(":::::Start createDocumentComment");
+        return comment;
     }
 
     @Override
-    public String createBillNumber(Integer terminalID, String transactionNumber) {
-        StringBuilder billNumber = new StringBuilder();
-        billNumber.append(DateUtil.getYearMonthDay())
-                .append(GlobalConstant.ASTRIX)
-                .append(terminalID)
-                .append(GlobalConstant.ASTRIX)
-                .append(transactionNumber);
-        return billNumber.toString();
+    public String createBillNumber(Integer terminalID, String transactionID) {
+        logger.info(":::::Start createBillNumber, terminalID: " + terminalID + ", transactionID: " + transactionID);
+        return  DateUtil.getYearMonthDay() +
+                GlobalConstant.ASTRIX +
+                terminalID +
+                GlobalConstant.ASTRIX +
+                transactionID;
     }
 }

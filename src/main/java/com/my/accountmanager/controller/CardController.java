@@ -9,20 +9,19 @@ import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "api/v1/cards") //http.localhost:8080/api/v1/card
+@RequestMapping(value = "api/v1/cards")
 public class CardController {
 
     private final CardService cardService;
@@ -32,51 +31,37 @@ public class CardController {
         this.cardService = cardService;
     }
 
-    @ApiOperation(value = "View a list of available cards", response = Iterable.class)
+    @ApiOperation(value = "View a list of available cards", response = CardDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved card list"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping
     public ResponseEntity<ResponseDTO<List<CardDTO>>> getAll() {
-        ResponseDTO<List<CardDTO>> response = new ResponseDTO<>();
-        Iterable<CardEntity> allCards = cardService.getAll();
-        List<CardDTO> cardDTOS = new ArrayList<>();
-        allCards.forEach(cardEntity -> {
-            cardDTOS.add(CardDTO.to(cardEntity));
-        });
+        List<CardEntity> allCards = cardService.getAll();
+        List<CardDTO> cardDTOS = allCards.stream().map(CardDTO::from).collect(Collectors.toList());
         if (cardDTOS.isEmpty()) {
-            response.setDate(new Date());
-            response.setCode(ResponseCode.NOT_FOUND_CONTENT);
-            response.setMessage("Cards were not found.");
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+            return ResponseEntity.notFound().build();
         }
-        response.setData(cardDTOS);
-        response.setCode(ResponseCode.FOUND_CONTENT);
-        response.setDate(new Date());
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.ok(ResponseDTO.<List<CardDTO>>builder()
+                .withData(cardDTOS)
+                .withDate(new Date())
+                .withCode(ResponseCode.FOUND_CONTENT)
+                .build());
     }
 
-    @ApiOperation(value = "View a specific card details", response = Iterable.class)
+    @ApiOperation(value = "View a specific card details", response = CardDTO.class)
     @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved list"),
+            @ApiResponse(code = 200, message = "Successfully retrieved card"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDTO<CardDTO>> getCard(@PathVariable Long id) {
-        ResponseDTO<CardDTO> response = new ResponseDTO<>();
-        Optional<CardEntity> cardEntity = cardService.getById(id);
-        if (cardEntity.isEmpty()){
-            response.setMessage("Card was not found.");
-            response.setDate(new Date());
-            response.setCode(ResponseCode.NOT_FOUND_CONTENT);
-            ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
-        }
-        response.setDate(new Date());
-        response.setCode(ResponseCode.FOUND_CONTENT);
-        response.setData(CardDTO.to(cardEntity.get()));
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        Optional<CardEntity> cardEntity = cardService.findById(id);
+        return cardEntity.map(card -> ResponseEntity.ok(ResponseDTO.<CardDTO>builder()
+                .withData(CardDTO.from(card))
+                .withDate(new Date())
+                .withCode(ResponseCode.FOUND_CONTENT)
+                .build())).orElse(ResponseEntity.notFound().build());
     }
-
-    //TODO create card end point
 }

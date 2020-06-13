@@ -9,4 +9,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface DepositRepository extends JpaRepository<DepositEntity, Long> {
+    DepositEntity getByDepositNumber(String depositNumber);
 }

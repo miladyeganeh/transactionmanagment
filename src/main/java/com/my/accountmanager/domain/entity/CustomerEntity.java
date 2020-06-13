@@ -11,7 +11,7 @@ import javax.validation.constraints.Email;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "CUSTOMER")
-public class CustomerEntity extends Auditable<String> {
+public class CustomerEntity extends Auditable {
 
     @Id
     @GeneratedValue
@@ -26,12 +26,15 @@ public class CustomerEntity extends Auditable<String> {
     @Column(name = "CUSTOMER_Number")
     private String customerNumber;
 
-    @Column(name = "EMAIL")
     @Email
+    @Column(name = "EMAIL")
     private String email;
 
     @Column(name = "ADDRESS")
     private String address;
+
+    @Column(name = "NATIONAL_ID", unique = true)
+    private String nationalId;
 
     public CustomerEntity() {
     }
@@ -82,5 +85,13 @@ public class CustomerEntity extends Auditable<String> {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getNationalId() {
+        return nationalId;
+    }
+
+    public void setNationalId(String nationalId) {
+        this.nationalId = nationalId;
     }
 }

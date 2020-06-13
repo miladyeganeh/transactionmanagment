@@ -1,12 +1,17 @@
 package com.my.accountmanager.model.dto;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
+import com.my.accountmanager.domain.entity.CardEntity;
+import com.my.accountmanager.domain.entity.DepositEntity;
 import org.modelmapper.ModelMapper;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-public class AccountDTO {
+
+public class AccountDTO implements Serializable {
 
     private Long id;
     private Double balance;
@@ -14,16 +19,23 @@ public class AccountDTO {
     private String accountNumber;
     private boolean isActive;
     private CustomerDTO customer;
-    private Set<DepositDTO> deposit;
-    private Set<CardDTO> cards;
+    private Set<String> deposits;
+    private Set<String> cards;
+    private String currencyCode;
 
-    public static AccountEntity from(AccountDTO accountRequestDTO) {
+    public static AccountEntity to(AccountDTO accountRequestDTO) {
         AccountEntity accountEntity = new ModelMapper().map(accountRequestDTO, AccountEntity.class);
         return accountEntity;
     }
 
-    public static AccountDTO to(AccountEntity accountEntity) {
+    public static AccountDTO form(AccountEntity accountEntity) {
         AccountDTO accountDTO = new ModelMapper().map(accountEntity, AccountDTO.class);
+        if (accountEntity.getDeposit() != null) {
+            accountDTO.setDeposits(accountEntity.getDeposit().stream().map(DepositEntity::getDepositNumber).collect(Collectors.toSet()));
+        }
+        if (accountEntity.getCards() != null) {
+            accountDTO.setCards(accountEntity.getCards().stream().map(CardEntity::getCardPAN).collect(Collectors.toSet()));
+        }
         return accountDTO;
     }
 
@@ -75,19 +87,27 @@ public class AccountDTO {
         this.customer = customer;
     }
 
-    public Set<DepositDTO> getDeposit() {
-        return deposit;
+    public Set<String> getDeposits() {
+        return deposits;
     }
 
-    public void setDeposit(Set<DepositDTO> deposit) {
-        this.deposit = deposit;
+    public void setDeposits(Set<String> deposits) {
+        this.deposits = deposits;
     }
 
-    public Set<CardDTO> getCards() {
+    public Set<String> getCards() {
         return cards;
     }
 
-    public void setCards(Set<CardDTO> cards) {
+    public void setCards(Set<String> cards) {
         this.cards = cards;
+    }
+
+    public String getCurrencyCode() {
+        return currencyCode;
+    }
+
+    public void setCurrencyCode(String currencyCode) {
+        this.currencyCode = currencyCode;
     }
 }

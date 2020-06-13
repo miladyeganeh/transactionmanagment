@@ -5,4 +5,5 @@ public class GlobalConstant {
 
     // Symbols
     public static String ASTRIX = "*";
+    public static String MESSAGE_SEPARATOR = ",";
 }

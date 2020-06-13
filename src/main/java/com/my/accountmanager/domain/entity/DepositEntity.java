@@ -11,7 +11,7 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "DEPOSIT")
-public class DepositEntity extends Auditable<String> {
+public class DepositEntity extends Auditable {
 
     @Id
     @GeneratedValue
@@ -23,11 +23,14 @@ public class DepositEntity extends Auditable<String> {
     @Column(name = "IS_DEFAULT", nullable = false)
     private boolean isDefault;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @Column(name = "IS_ACTIVE")
+    private boolean isActive;
+
+    @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "ACCOUNT_ID", nullable = false)
     private AccountEntity account;
 
-    @OneToMany(mappedBy = "deposit")
+    @OneToMany(mappedBy = "deposit", cascade = CascadeType.ALL)
     @Column(name = "TRANSACTION", nullable = false)
     private Set<TransactionEntity> transaction;
 
@@ -56,6 +59,14 @@ public class DepositEntity extends Auditable<String> {
 
     public void setIsDefault(boolean aDefault) {
         isDefault = aDefault;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean active) {
+        isActive = active;
     }
 
     public AccountEntity getAccount() {

@@ -10,14 +10,14 @@ import javax.persistence.*;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "CURRENCY")
-public class CurrencyEntity extends Auditable<String> {
+public class CurrencyEntity extends Auditable {
 
     @Id
     @GeneratedValue
     private Long id;
 
-    @Column(name = "CODE")
-    private Integer code;
+    @Column(name = "CODE", unique = true)
+    private String code;
 
     @Column(name = "NAME")
     private String name;
@@ -33,11 +33,11 @@ public class CurrencyEntity extends Auditable<String> {
         this.id = id;
     }
 
-    public Integer getCode() {
+    public String getCode() {
         return code;
     }
 
-    public void setCode(Integer code) {
+    public void setCode(String code) {
         this.code = code;
     }
 

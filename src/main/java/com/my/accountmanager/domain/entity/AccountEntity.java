@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "ACCOUNT")
-public class AccountEntity extends Auditable<String> {
+public class AccountEntity extends Auditable {
 
     @Id
     @GeneratedValue
@@ -32,19 +32,21 @@ public class AccountEntity extends Auditable<String> {
     private boolean isActive;
 
     @Column(name = "STATUS")
+    @Enumerated(EnumType.STRING)
     private AccountStatus status;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "CURRENCY_ID")
     private CurrencyEntity currency;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CUSTOMER_ID")
     private CustomerEntity customer;
 
-    @OneToMany(mappedBy = "account", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<DepositEntity> deposit;
 
-    @OneToMany(mappedBy = "account")
+    @OneToMany(mappedBy = "account", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<CardEntity> cards;
 
     public AccountEntity() {
@@ -80,14 +82,6 @@ public class AccountEntity extends Auditable<String> {
 
     public void setOpeningDate(Date openingDate) {
         this.openingDate = openingDate;
-    }
-
-    public boolean isActive() {
-        return isActive;
-    }
-
-    public void setActive(boolean active) {
-        isActive = active;
     }
 
     public boolean getIsActive() {

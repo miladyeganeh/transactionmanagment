@@ -1,24 +1,25 @@
 package com.my.accountmanager.business.transaction;
 
 import com.my.accountmanager.business.transaction.validation.aggregator.ValidationAggregator;
-import com.my.accountmanager.domain.entity.TransactionEntity;
-import com.my.accountmanager.model.TrxValidation;
-import com.my.accountmanager.model.TrxValidatorMessages;
-import com.my.accountmanager.model.dto.TransactionDTO;
+import com.my.accountmanager.domain.enums.TransactionType;
+import com.my.accountmanager.model.TrxInfo;
+import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
+import com.my.accountmanager.model.dto.response.TransactionResponseDTO;
 import com.my.accountmanager.service.DocumentService;
 import com.my.accountmanager.service.TransactionService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import javax.persistence.EntityTransaction;
 import java.util.List;
 
 @Component("withdrawTrx")
-public class WithdrawTrx extends ProcessTrx {
+public class WithdrawTrx extends TrxProcessor {
+    private static final Logger logger = LoggerFactory.getLogger(WithdrawTrx.class);
 
-    private ValidationAggregator validator;
-    private TrxValidation trxValidation;
+    private final ValidationAggregator validator;
 
     @Autowired
     public WithdrawTrx(TransactionService transactionService,
@@ -30,22 +31,23 @@ public class WithdrawTrx extends ProcessTrx {
     }
 
     @Override
-    public void initiate(TransactionDTO transactionRequestDTO) {
-        this.trxValidation.setSourceAccountNumber(transactionRequestDTO.getSourceAccount().getAccountNumber());
-    }
-
-    @Override
-    public TransactionEntity doTransaction() {
+    public TransactionResponseDTO doTransaction(TransactionRequestDTO trxReq) {
         return null;
     }
 
     @Override
-    protected TransactionEntity createTransaction(EntityTransaction trx) {
+    protected TransactionResponseDTO processTransaction(TransactionRequestDTO trxReq) {
         return null;
     }
 
     @Override
-    public List<TrxValidatorMessages> validate() {
-        return validator.aggregate(this.trxValidation);
+    public TransactionType getTrxType() {
+        return TransactionType.WITHDRAW;
     }
+
+    @Override
+    public List<String> validate(TrxInfo trxInfo, TransactionRequestDTO trxReq) {
+        return validator.aggregate(trxInfo, trxReq);
+    }
+
 }

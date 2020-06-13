@@ -14,13 +14,14 @@ import java.util.UUID;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "TRANSACTION")
-public class TransactionEntity extends Auditable<String> {
+public class TransactionEntity extends Auditable {
 
     @Id
     @GeneratedValue
     private Long id;
 
     @Column(name = "TRANSACTIONID", unique = true)
+    //todo shouldn't we receive this form input?
     private String transactionID = DateUtil.getYearMonthDay() + UUID.randomUUID();
 
     @Column(name = "TERMINALID")
@@ -32,28 +33,33 @@ public class TransactionEntity extends Auditable<String> {
     @Column(name = "TYPE")
     private TransactionType type;
 
+    @Column(name = "trxDate")
     private Date trxDate;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "CURRENCY_ID")
     private CurrencyEntity currency;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "SRC_ACC_ID")
     private AccountEntity sourceAccount;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "DEST_ACC_ID")
     private AccountEntity destinationAccount;
 
-    @OneToOne
-    private TransactionEntity reversTransaction;
-
-    @OneToOne
-    private TransactionEntity mainTransaction;
-
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "DEPOSIT_ID")
     private DepositEntity deposit;
 
-    public TransactionEntity() {
-    }
+    @OneToOne(cascade = CascadeType.ALL)
+    private TransactionEntity reversTransaction;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private TransactionEntity mainTransaction;
+
+    @OneToOne(cascade = CascadeType.ALL)
+    private DocumentEntity documentEntity;
 
     public Long getId() {
         return id;
@@ -127,6 +133,14 @@ public class TransactionEntity extends Auditable<String> {
         this.destinationAccount = destinationAccount;
     }
 
+    public DepositEntity getDeposit() {
+        return deposit;
+    }
+
+    public void setDeposit(DepositEntity deposit) {
+        this.deposit = deposit;
+    }
+
     public TransactionEntity getReversTransaction() {
         return reversTransaction;
     }
@@ -143,11 +157,11 @@ public class TransactionEntity extends Auditable<String> {
         this.mainTransaction = mainTransaction;
     }
 
-    public DepositEntity getDeposit() {
-        return deposit;
+    public DocumentEntity getDocumentEntity() {
+        return documentEntity;
     }
 
-    public void setDeposit(DepositEntity deposit) {
-        this.deposit = deposit;
+    public void setDocumentEntity(DocumentEntity documentEntity) {
+        this.documentEntity = documentEntity;
     }
 }

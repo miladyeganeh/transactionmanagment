@@ -1,3 +1,28 @@
+server:
+  port: 8080
 spring:
-  profiles:
-    active: docker
+  application:
+    name: accountmanager
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.H2Dialect
+  datasource:
+    hikari:
+      connection-test-query: select 1 from dual
+      minimum-idle: 1
+      maximum-pool-size: 5
+    url: jdbc:h2:mem:mobilab
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  jackson:
+    default-property-inclusion: non_null
+
+#logging:
+#  config: classpath:log/log4j2.yml

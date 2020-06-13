@@ -1,12 +1,13 @@
 package com.my.accountmanager.model.dto;
 
-import java.util.Date;
+import java.io.Serializable;
 import java.util.Map;
 
-public class CurrencyThirdParty {
+
+public class CurrencyThirdPartyDTO implements Serializable {
     private Map<String, Double> rates;
     private String base;
-    private Date date;
+    private String date;
 
     public Map<String, Double> getRates() {
         return rates;
@@ -24,11 +25,11 @@ public class CurrencyThirdParty {
         this.base = base;
     }
 
-    public Date getDate() {
+    public String getDate() {
         return date;
     }
 
-    public void setDate(Date date) {
+    public void setDate(String date) {
         this.date = date;
     }
 }

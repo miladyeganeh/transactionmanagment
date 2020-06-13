@@ -4,7 +4,9 @@ import com.my.accountmanager.domain.entity.CardEntity;
 import com.my.accountmanager.domain.enums.CardType;
 import org.modelmapper.ModelMapper;
 
-public class CardDTO {
+import java.io.Serializable;
+
+public class CardDTO implements Serializable {
 
     private Long id;
     private String cardHolderName;
@@ -16,12 +18,12 @@ public class CardDTO {
     private String hashPassword;
     private CardType type;
 
-    public static CardEntity from(CardDTO cardDTO) {
+    public static CardEntity to(CardDTO cardDTO) {
         CardEntity cardEntity = new ModelMapper().map(cardDTO, CardEntity.class);
         return cardEntity;
     }
 
-    public static CardDTO to(CardEntity cardEntity) {
+    public static CardDTO from(CardEntity cardEntity) {
         CardDTO cardDTO = new ModelMapper().map(cardEntity, CardDTO.class);
         cardDTO.setHashPassword("");
         return cardDTO;

@@ -1,9 +1,7 @@
 package com.my.accountmanager.domain.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -21,27 +19,19 @@ import static javax.persistence.TemporalType.TIMESTAMP;
  */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
-public abstract class Auditable<U> implements Serializable {
+public abstract class Auditable implements Serializable {
 
-    @Version
     @JsonIgnore
+    @Version
     private Integer version;
 
-    @CreatedBy
     @JsonIgnore
-    protected U createdBy;
-
     @CreatedDate
-    @JsonIgnore
     @Temporal(TIMESTAMP)
     protected Date createdDate;
 
-    @LastModifiedBy
     @JsonIgnore
-    protected U lastModifiedBy;
-
     @LastModifiedDate
-    @JsonIgnore
     @Temporal(TIMESTAMP)
     protected Date lastModifiedDate;
 
@@ -53,28 +43,12 @@ public abstract class Auditable<U> implements Serializable {
         this.version = version;
     }
 
-    public U getCreatedBy() {
-        return createdBy;
-    }
-
-    public void setCreatedBy(U createdBy) {
-        this.createdBy = createdBy;
-    }
-
     public Date getCreatedDate() {
         return createdDate;
     }
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
-    }
-
-    public U getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
-    public void setLastModifiedBy(U lastModifiedBy) {
-        this.lastModifiedBy = lastModifiedBy;
     }
 
     public Date getLastModifiedDate() {

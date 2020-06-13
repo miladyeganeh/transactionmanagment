@@ -18,11 +18,17 @@ bootRun {
     args = ["--spring.profiles.active=" + profiles]
 }
 
+//configurations {
+//    compile.exclude module: 'spring-boot-starter-logging'
+//}
 
 dependencies {
+    def withoutHamcrest = { exclude group: 'org.hamcrest', module: 'hamcrest-core' }
+    def withoutJunit = { exclude group: 'junit', module: 'junit' }
+
+    implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
-    implementation 'org.springframework.boot:spring-boot-starter-web'
 //    implementation 'org.flywaydb:flyway-core'
     implementation 'org.hibernate:hibernate-envers:5.4.17.Final'
     implementation 'javax.validation:validation-api:2.0.0.Final'
@@ -32,8 +38,16 @@ dependencies {
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.3.0.RELEASE'
     compile("org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE") { true }
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
     runtimeOnly 'com.h2database:h2'
+    testCompile "org.springframework.boot:spring-boot-starter-test", { exclude group: 'junit', module: 'junit' }
+    testCompile "org.springframework.security:spring-security-test"
+    testCompile 'com.h2database:h2:1.4.199'
+    testCompile 'org.easymock:easymock:3.4', { exclude group: 'org.hamcrest', module: 'hamcrest-core' }
+    testImplementation('org.hamcrest:hamcrest:2.1')
+    testImplementation 'com.tngtech.archunit:archunit-junit5-api:0.11.0', { exclude group: 'junit', module: 'junit' }
+    testImplementation 'junit:junit'
     testImplementation('org.springframework.boot:spring-boot-starter-test') {
         exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
     }

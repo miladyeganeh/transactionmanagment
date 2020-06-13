@@ -1,54 +1,31 @@
 package com.my.accountmanager.business.transaction.validation.aggregator;
 
-import com.my.accountmanager.business.transaction.validation.TrxValidator;
-import com.my.accountmanager.model.TrxValidation;
-import com.my.accountmanager.model.TrxValidatorMessages;
+import com.my.accountmanager.business.transaction.validation.rule.ValidationRule;
+import com.my.accountmanager.model.TrxInfo;
+import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.function.BiConsumer;
 
 @Component("transferValidatorAggregator")
 public class TransferValidatorAggregator implements ValidationAggregator {
 
-
-    private final TrxValidator trxDateValidator;
-    private final TrxValidator trxFromAccountValidator;
-    private final TrxValidator trxDuplicationValidator;
-    private final TrxValidator trxCardValidator;
+    private final BiConsumer<TrxInfo, TransactionRequestDTO> validationChain;
 
     @Autowired
-    public TransferValidatorAggregator(@Qualifier("trxDateValidator") TrxValidator trxDateValidator,
-                                       @Qualifier("trxFromAccountValidator") TrxValidator trxFromAccountValidator,
-                                       @Qualifier("trxDuplicationValidator") TrxValidator trxDuplicationValidator,
-                                       @Qualifier("trxCardPassValidator") TrxValidator trxCardValidator) {
-        this.trxDateValidator = trxDateValidator;
-        this.trxFromAccountValidator = trxFromAccountValidator;
-        this.trxDuplicationValidator = trxDuplicationValidator;
-        this.trxCardValidator = trxCardValidator;
+    public TransferValidatorAggregator(@Qualifier("trxDateValidator") ValidationRule trxDateValidator,
+                                       @Qualifier("trxAccountNumberValidator") ValidationRule trxAccountNumberValidator,
+                                       @Qualifier("trxDuplicationValidator") ValidationRule trxDuplicationValidator) {
+        this.validationChain =
+                trxDateValidator.performValidation()
+                        .andThen(trxAccountNumberValidator.performValidation())
+                        .andThen(trxDuplicationValidator.performValidation());
     }
 
     @Override
-    public List<TrxValidatorMessages> aggregate(TrxValidation trxValidation) {
-        List<TrxValidatorMessages> trxValidatorMessages = new ArrayList<>();
-        TrxValidatorMessages trxDateValidator = this.trxDateValidator.validate(trxValidation);
-        if (trxDateValidator.getFailValidation()) {
-            trxValidatorMessages.add(trxDateValidator);
-        }
-        TrxValidatorMessages trxFromAccountValidator = this.trxFromAccountValidator.validate(trxValidation);
-        if (trxFromAccountValidator.getFailValidation()) {
-            trxValidatorMessages.add(trxFromAccountValidator);
-        }
-        TrxValidatorMessages trxDuplicationValidator = this.trxDuplicationValidator.validate(trxValidation);
-        if (trxDuplicationValidator.getFailValidation()) {
-            trxValidatorMessages.add(trxDuplicationValidator);
-        }
-        TrxValidatorMessages trxCardValidator = this.trxCardValidator.validate(trxValidation);
-        if (trxCardValidator.getFailValidation()) {
-            trxValidatorMessages.add(trxCardValidator);
-        }
-        return trxValidatorMessages;
+    public BiConsumer<TrxInfo, TransactionRequestDTO> getValidationChain() {
+        return validationChain;
     }
 }

@@ -1,27 +1,31 @@
 package com.my.accountmanager.controller;
 
-import com.my.accountmanager.business.transaction.ProcessTrx;
-import com.my.accountmanager.business.transaction.factory.TrxFactory;
+import com.my.accountmanager.business.transaction.TrxProcessor;
+import com.my.accountmanager.business.transaction.factory.TrxProcessorFactory;
 import com.my.accountmanager.domain.entity.TransactionEntity;
+import com.my.accountmanager.domain.entity.TransactionRequestEntity;
 import com.my.accountmanager.domain.enums.TransactionType;
-import com.my.accountmanager.exception.configuration.TransactionServiceException;
-import com.my.accountmanager.model.TrxValidatorMessages;
-import com.my.accountmanager.model.dto.TransactionDTO;
+import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
 import com.my.accountmanager.model.dto.response.ResponseDTO;
 import com.my.accountmanager.model.dto.response.TransactionResponseDTO;
+import com.my.accountmanager.model.dto.response.withrel.TransactionRestDTO;
 import com.my.accountmanager.model.enums.ResponseCode;
+import com.my.accountmanager.service.TransactionRequestService;
 import com.my.accountmanager.service.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
-import java.util.List;
 import java.util.Optional;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * @author M.Yeganeh on 01/06/2020.
@@ -30,32 +34,31 @@ import java.util.Optional;
 @RequestMapping(value = "api/v1/transactions")
 public class TransactionController {
 
-    private final TrxFactory trxFactory;
+    private final TrxProcessorFactory trxProcessorFactory;
+    private final TransactionRequestService trxReqService;
     private final TransactionService transactionService;
 
     @Autowired
-    public TransactionController(TrxFactory trxFactory, TransactionService transactionService) {
-        this.trxFactory = trxFactory;
+    public TransactionController(@Qualifier("trxProcessorFactoryImpl") TrxProcessorFactory trxProcessorFactory,
+                                 TransactionRequestService trxReqService, TransactionService transactionService) {
+        this.trxProcessorFactory = trxProcessorFactory;
+        this.trxReqService = trxReqService;
         this.transactionService = transactionService;
     }
 
-    @ApiOperation(value = "View a specific transaction details", response = Iterable.class)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "Successfully retrieved details"),
-            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
-    })
-    @GetMapping("/{transactionID}")
-    public ResponseEntity<ResponseDTO<TransactionResponseDTO>> getTransaction(@PathVariable String transactionID) {
-        Optional<TransactionEntity> transaction = transactionService.getByTransactionID(transactionID);
-        ResponseDTO<TransactionResponseDTO> response = new ResponseDTO<>();
-        transaction.ifPresent(trx -> {
-            response.setData(TransactionResponseDTO.to(trx));
-            response.setDate(new Date());
-        });
-        if (response.getData() == null) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null);
+    @GetMapping(value = "/{transactionID}")
+    public ResponseEntity<TransactionRestDTO> getTransaction(@PathVariable String transactionID) {
+        Optional<TransactionEntity> transactionEntity = transactionService.findByTransactionID(transactionID);
+        if (transactionEntity.isPresent()) {
+            TransactionRestDTO from = TransactionRestDTO.from(transactionEntity.get());
+            from.add(linkTo(methodOn(TransactionController.class).getTransaction(from.getTransactionID())).withSelfRel());
+            from.add(linkTo(methodOn(AccountController.class).getAccount(from.getSourceAccountNumber())).withRel("Source Account"));
+            from.add(linkTo(methodOn(AccountController.class).getAccount(from.getDestinationAccountNumber())).withRel("Destination Account"));
+            from.add(linkTo(methodOn(CurrencyController.class).getCurrency(from.getCurrencyID())).withRel("Currency"));
+            from.add(linkTo(methodOn(DocumentController.class).getDocument(from.getDocumentID())).withRel("Document"));
+            return ResponseEntity.ok(from);
         }
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+        return ResponseEntity.notFound().build();
     }
 
     @ApiOperation(value = "Doing a transaction for your payment or withdraw", response = Iterable.class)
@@ -65,27 +68,37 @@ public class TransactionController {
             @ApiResponse(code = 500, message = "transaction creation process was crashed due to some system failure, try again")
     })
     @PostMapping
-    public ResponseEntity<ResponseDTO<TransactionResponseDTO>> createTransaction(@RequestBody TransactionDTO transactionDTO) {
-        ResponseDTO<TransactionResponseDTO> response = new ResponseDTO<>();
-        ProcessTrx processTrx = trxFactory.getInstance(TransactionType.getByValue(transactionDTO.getTransactionType()));
-        processTrx.initiate(transactionDTO);
-        List<TrxValidatorMessages> errorMessages = processTrx.validate();
-        if (!errorMessages.isEmpty()) {
-            response.setDate(new Date());
-            response.setCode(ResponseCode.VALIDATION_FAILED);
-            response.getData().setErrorList(errorMessages);
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+    public ResponseEntity<ResponseDTO<TransactionResponseDTO>> createTransaction(@RequestBody TransactionRequestDTO transactionRequest) {
+        //todo add validation for mandatory fields
+        //todo handle dto extra fields
+
+        TrxProcessor trxProcessor = trxProcessorFactory.getInstance(TransactionType.getByValue(transactionRequest.getTransactionType()));
+        try {
+            TransactionResponseDTO transactionResponseDTO = trxProcessor.doTransaction(transactionRequest);
+            ResponseDTO<TransactionResponseDTO> responseDto = trxReqService.createTransactionResponse(transactionResponseDTO);
+            if (responseDto.getData().getSuccessful()) {
+                responseDto.add(linkTo(methodOn(TransactionController.class).getTransaction(responseDto.getData().getTrxID())).withRel("Transaction"));
+                return ResponseEntity.ok(responseDto);
+            }
+            return ResponseEntity.badRequest().body(responseDto);
+        } catch (RuntimeException exception) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ResponseDTO.<TransactionResponseDTO>builder().withMessage(exception.getMessage())
+                            .withCode(ResponseCode.INTERNAL_ERROR).withDate(new Date())
+                            .build());
         }
-        try{
-            response = processTrx.doTransaction();
-            response.setDate(new Date());
-            response.setCode(ResponseCode.SUCCESS);
-        } catch (TransactionServiceException exception) {
-            response.setDate(new Date());
-            response.setCode(ResponseCode.INTERNAL_ERROR);
-            response.setMessage(exception.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
-        }
-        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
+    @ApiOperation(value = "View a specific transaction details", response = Iterable.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "Successfully retrieved details"),
+            @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
+    })
+    @GetMapping("transaction-request/{transactionID}")
+    public ResponseEntity<ResponseDTO<TransactionResponseDTO>> getTransactionRequest(@PathVariable String transactionID) {
+        Optional<TransactionRequestEntity> transaction = trxReqService.findByTransactionID(transactionID);
+        return transaction
+                .map(trx -> ResponseEntity.ok().body(trxReqService.createTransactionResponse(TransactionResponseDTO.from(trx))))
+                .orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
     }
 }

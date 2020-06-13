@@ -13,7 +13,7 @@ import java.util.Set;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "DOCUMENT")
-public class DocumentEntity extends Auditable<String> {
+public class DocumentEntity extends Auditable {
 
     @Id
     @GeneratedValue
@@ -25,23 +25,28 @@ public class DocumentEntity extends Auditable<String> {
     @Column(name = "ISSUANCE_DATE", nullable = false)
     private Date issuanceDate;
 
-    @Column(name = "BILL_NUMBER", nullable = false)
+    @Column(name = "BILL_NUMBER", nullable = false, unique = true)
     private String billNumber;
 
     @Column(name = "STATUS", nullable = false)
+    @Enumerated(EnumType.STRING)
     private DocumentStatus status;
 
     @Column(name = "TOTAL_AMOUNT", nullable = false)
     private Double totalAmount;
 
-    @OneToOne
-    private TransactionEntity transaction;
+//    @OneToOne(cascade = CascadeType.ALL)
+//    private TransactionEntity transaction;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private DocumentEntity reversDocument;
 
     @OneToMany(mappedBy = "document", cascade = CascadeType.ALL)
     private Set<DocumentItemEntity> documentItems;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "CURRENCY_ID")
+    private CurrencyEntity currency;
 
     public DocumentEntity() {
     }
@@ -94,13 +99,13 @@ public class DocumentEntity extends Auditable<String> {
         this.totalAmount = totalAmount;
     }
 
-    public TransactionEntity getTransaction() {
-        return transaction;
-    }
-
-    public void setTransaction(TransactionEntity transaction) {
-        this.transaction = transaction;
-    }
+//    public TransactionEntity getTransaction() {
+//        return transaction;
+//    }
+//
+//    public void setTransaction(TransactionEntity transaction) {
+//        this.transaction = transaction;
+//    }
 
     public DocumentEntity getReversDocument() {
         return reversDocument;
@@ -116,5 +121,13 @@ public class DocumentEntity extends Auditable<String> {
 
     public void setDocumentItems(Set<DocumentItemEntity> documentItems) {
         this.documentItems = documentItems;
+    }
+
+    public CurrencyEntity getCurrency() {
+        return currency;
+    }
+
+    public void setCurrency(CurrencyEntity currency) {
+        this.currency = currency;
     }
 }

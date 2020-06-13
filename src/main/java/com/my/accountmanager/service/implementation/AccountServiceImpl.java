@@ -1,12 +1,18 @@
 package com.my.accountmanager.service.implementation;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
+import com.my.accountmanager.domain.enums.AccountStatus;
 import com.my.accountmanager.model.dto.AccountDTO;
+import com.my.accountmanager.model.dto.response.ResponseDTO;
+import com.my.accountmanager.model.enums.ResponseCode;
 import com.my.accountmanager.repository.AccountRepository;
 import com.my.accountmanager.service.AccountService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.Optional;
 
 /**
@@ -15,6 +21,7 @@ import java.util.Optional;
 
 @Service
 public class AccountServiceImpl extends BaseCrudServiceImpl<AccountEntity, AccountRepository> implements AccountService {
+    private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
 
     private AccountRepository accountRepository;
 
@@ -25,18 +32,28 @@ public class AccountServiceImpl extends BaseCrudServiceImpl<AccountEntity, Accou
     }
 
     @Override
-    public Optional<AccountEntity> getByAccountNumber(String accountNumber) {
+    public Optional<AccountEntity> findByAccountNumber(String accountNumber) {
         return accountRepository.findByAccountNumber(accountNumber);
     }
 
     @Override
-    public AccountDTO persist(AccountDTO accountDTO) {
-        AccountEntity savedAccountEntity = save(AccountDTO.from(accountDTO));
-        return AccountDTO.to(savedAccountEntity);
+    public Optional<AccountEntity> findActiveAccountByAccountNumber(String accountNumber) {
+        return accountRepository.findByAccountNumberAndIsActiveAndStatus(accountNumber, true, AccountStatus.ACTIVE);
     }
 
     @Override
-    public void evict(AccountEntity accountEntity) {
-        super.delete(accountEntity);
+    public AccountDTO persist(AccountDTO accountDTO) {
+        //todo set currency, customer, deposit and cards
+        AccountEntity savedAccountEntity = save(AccountDTO.to(accountDTO));
+        return AccountDTO.form(savedAccountEntity);
+    }
+
+    @Override
+    public ResponseDTO<AccountDTO> createAccountResponse(AccountDTO accountDTO, ResponseCode code) {
+        return ResponseDTO.<AccountDTO>builder()
+                .withData(accountDTO)
+                .withDate(new Date())
+                .withCode(code)
+                .build();
     }
 }

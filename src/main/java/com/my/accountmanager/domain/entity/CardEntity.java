@@ -11,7 +11,7 @@ import javax.persistence.*;
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "CARD")
-public class CardEntity extends Auditable<String> {
+public class CardEntity extends Auditable {
 
     @Id
     @GeneratedValue
@@ -30,22 +30,23 @@ public class CardEntity extends Auditable<String> {
     private String cvv;
 
     @Column(name = "EXPIRE_DATE_MONTH")
-    private String expireDateMonth;
+    private Integer expireDateMonth;
 
-    @Column(name = "EXPIRE_DATE_Year")
-    private String expireDateYear;
+    @Column(name = "EXPIRE_DATE_YEAR")
+    private Integer expireDateYear;
 
     @Column(name = "HASH_PASSWORD")
     private String hashPassword;
 
     @Column(name = "TYPE")
+    @Enumerated(EnumType.STRING)
     private CardType type;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ACCOUNT_ID")
     private AccountEntity account;
 
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "CUSTOMER_ID")
     private CustomerEntity customer;
 
@@ -92,19 +93,19 @@ public class CardEntity extends Auditable<String> {
         this.cvv = cvv;
     }
 
-    public String getExpireDateMonth() {
+    public Integer getExpireDateMonth() {
         return expireDateMonth;
     }
 
-    public void setExpireDateMonth(String expireDateMonth) {
+    public void setExpireDateMonth(Integer expireDateMonth) {
         this.expireDateMonth = expireDateMonth;
     }
 
-    public String getExpireDateYear() {
+    public Integer getExpireDateYear() {
         return expireDateYear;
     }
 
-    public void setExpireDateYear(String expireDateYear) {
+    public void setExpireDateYear(Integer expireDateYear) {
         this.expireDateYear = expireDateYear;
     }
 

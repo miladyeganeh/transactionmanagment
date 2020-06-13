@@ -1,16 +1,15 @@
 package com.my.accountmanager.business.accounting;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
-import com.my.accountmanager.domain.entity.TransactionEntity;
-import com.my.accountmanager.model.TrxValidation;
-import com.my.accountmanager.model.TrxValidatorMessages;
-
-import java.util.List;
+import com.my.accountmanager.domain.entity.DocumentEntity;
+import com.my.accountmanager.model.TrxInfo;
+import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
 
 public interface AccountantService {
-    void initiate(TrxValidation trxValidation);
-    List<TrxValidatorMessages> issueDocument(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity);
-    void calculate(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity);
-    void reversDocument();
-    List<TrxValidatorMessages> validate();
+    DocumentEntity issueDocument(AccountEntity sourceAccount, AccountEntity destinationAccount, TrxInfo trxInfo, TransactionRequestDTO trxReq);
+//    void initiate(TrxInfo trxValidation);
+//    List<TrxValidatorMessages> issueDocument(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity);
+//    void calculate(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity);
+//    void reversDocument();
+//    List<TrxValidatorMessages> validate();
 }

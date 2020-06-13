@@ -1,23 +1,33 @@
 package com.my.accountmanager.model.dto.response;
 
-import com.my.accountmanager.domain.entity.TransactionEntity;
-import com.my.accountmanager.model.TrxValidatorMessages;
-import org.modelmapper.ModelMapper;
+import com.my.accountmanager.domain.entity.TransactionRequestEntity;
+import com.my.accountmanager.model.enums.ResponseCode;
+import org.springframework.hateoas.RepresentationModel;
 
+import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
-public class TransactionResponseDTO {
+public class TransactionResponseDTO extends RepresentationModel<TransactionResponseDTO> implements Serializable {
     private String trxID;
     private Date time;
     private Double amount;
     private Integer terminalId;
     private Integer transactionType;
-    private List<TrxValidatorMessages> errorList;
+    private String message;
+    private Boolean successful;
 
-    public static TransactionResponseDTO to(TransactionEntity transactionEntity) {
-        return new ModelMapper().map(transactionEntity, TransactionResponseDTO.class);
+    public static TransactionResponseDTO from(TransactionRequestEntity requestEntity) {
+        TransactionResponseDTO responseDTO = new TransactionResponseDTO();
+        responseDTO.setAmount(requestEntity.getAmount());
+        responseDTO.setSuccessful(requestEntity.getResponseCode().equals(ResponseCode.SUCCESS));
+        responseDTO.setTerminalId(requestEntity.getTerminalId());
+        responseDTO.setTime(new Date());
+        responseDTO.setTransactionType(requestEntity.getTransactionType());
+        responseDTO.setTrxID(requestEntity.getTrxID());
+        responseDTO.setMessage(requestEntity.getMessage());
+        return responseDTO;
     }
+
     public String getTrxID() {
         return trxID;
     }
@@ -58,11 +68,19 @@ public class TransactionResponseDTO {
         this.transactionType = transactionType;
     }
 
-    public List<TrxValidatorMessages> getErrorList() {
-        return errorList;
+    public String getMessage() {
+        return message;
     }
 
-    public void setErrorList(List<TrxValidatorMessages> errorList) {
-        this.errorList = errorList;
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Boolean getSuccessful() {
+        return successful;
+    }
+
+    public void setSuccessful(Boolean successful) {
+        this.successful = successful;
     }
 }
