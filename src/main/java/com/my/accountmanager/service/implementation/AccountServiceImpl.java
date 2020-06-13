@@ -2,8 +2,8 @@ package com.my.accountmanager.service.implementation;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
 import com.my.accountmanager.domain.enums.AccountStatus;
-import com.my.accountmanager.model.dto.AccountDTO;
 import com.my.accountmanager.model.dto.response.ResponseDTO;
+import com.my.accountmanager.model.dto.response.withrel.AccountResponseDTO;
 import com.my.accountmanager.model.enums.ResponseCode;
 import com.my.accountmanager.repository.AccountRepository;
 import com.my.accountmanager.service.AccountService;
@@ -42,15 +42,15 @@ public class AccountServiceImpl extends BaseCrudServiceImpl<AccountEntity, Accou
     }
 
     @Override
-    public AccountDTO persist(AccountDTO accountDTO) {
+    public AccountResponseDTO persist(AccountResponseDTO accountDTO) {
         //todo set currency, customer, deposit and cards
-        AccountEntity savedAccountEntity = save(AccountDTO.to(accountDTO));
-        return AccountDTO.form(savedAccountEntity);
+        AccountEntity savedAccountEntity = save(AccountResponseDTO.to(accountDTO));
+        return AccountResponseDTO.form(savedAccountEntity);
     }
 
     @Override
-    public ResponseDTO<AccountDTO> createAccountResponse(AccountDTO accountDTO, ResponseCode code) {
-        return ResponseDTO.<AccountDTO>builder()
+    public ResponseDTO<AccountResponseDTO> createAccountResponse(AccountResponseDTO accountDTO, ResponseCode code) {
+        return ResponseDTO.<AccountResponseDTO>builder()
                 .withData(accountDTO)
                 .withDate(new Date())
                 .withCode(code)

@@ -7,9 +7,4 @@ import com.my.accountmanager.model.dto.request.TransactionRequestDTO;
 
 public interface AccountantService {
     DocumentEntity issueDocument(AccountEntity sourceAccount, AccountEntity destinationAccount, TrxInfo trxInfo, TransactionRequestDTO trxReq);
-//    void initiate(TrxInfo trxValidation);
-//    List<TrxValidatorMessages> issueDocument(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity);
-//    void calculate(AccountEntity sourceAccount, AccountEntity destinationAccount, TransactionEntity transactionEntity);
-//    void reversDocument();
-//    List<TrxValidatorMessages> validate();
 }

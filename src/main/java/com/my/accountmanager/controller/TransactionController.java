@@ -51,17 +51,12 @@ public class TransactionController {
         Optional<TransactionEntity> transactionEntity = transactionService.findByTransactionID(transactionID);
         if (transactionEntity.isPresent()) {
             TransactionRestDTO from = TransactionRestDTO.from(transactionEntity.get());
-            from.add(linkTo(methodOn(TransactionController.class).getTransaction(from.getTransactionID())).withSelfRel());
-            from.add(linkTo(methodOn(AccountController.class).getAccount(from.getSourceAccountNumber())).withRel("Source Account"));
-            from.add(linkTo(methodOn(AccountController.class).getAccount(from.getDestinationAccountNumber())).withRel("Destination Account"));
-            from.add(linkTo(methodOn(CurrencyController.class).getCurrency(from.getCurrencyID())).withRel("Currency"));
-            from.add(linkTo(methodOn(DocumentController.class).getDocument(from.getDocumentID())).withRel("Document"));
             return ResponseEntity.ok(from);
         }
         return ResponseEntity.notFound().build();
     }
 
-    @ApiOperation(value = "Doing a transaction for your payment or withdraw", response = Iterable.class)
+    @ApiOperation(value = "Doing a transaction for your payment or withdraw", response = ResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully transaction was done."),
             @ApiResponse(code = 400, message = "Due to bad input data validation was failed, You can retrieve list of errors"),
@@ -89,7 +84,7 @@ public class TransactionController {
         }
     }
 
-    @ApiOperation(value = "View a specific transaction details", response = Iterable.class)
+    @ApiOperation(value = "View a specific transaction details", response = ResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved details"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")

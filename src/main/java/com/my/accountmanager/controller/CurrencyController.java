@@ -30,7 +30,7 @@ public class CurrencyController {
         this.currencyService = currencyService;
     }
 
-    @ApiOperation(value = "View a list of available currency exchange rate", response = CurrencyThirdPartyDTO.class)
+    @ApiOperation(value = "View a list of available currency exchange rate", response = ResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved currency exchange rate list."),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found.")
@@ -45,7 +45,7 @@ public class CurrencyController {
                 .build());
     }
 
-    @ApiOperation(value = "View a specific currency details", response = CurrencyRestDTO.class)
+    @ApiOperation(value = "View a specific currency details", response = ResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved details"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")

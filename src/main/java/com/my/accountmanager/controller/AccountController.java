@@ -1,8 +1,8 @@
 package com.my.accountmanager.controller;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
-import com.my.accountmanager.model.dto.AccountDTO;
 import com.my.accountmanager.model.dto.response.ResponseDTO;
+import com.my.accountmanager.model.dto.response.withrel.AccountResponseDTO;
 import com.my.accountmanager.model.enums.ResponseCode;
 import com.my.accountmanager.service.AccountService;
 import io.swagger.annotations.ApiOperation;
@@ -29,45 +29,45 @@ public class AccountController {
         this.accountService = accountService;
     }
 
-    @ApiOperation(value = "View a specific Account Details", response = AccountDTO.class)
+    @ApiOperation(value = "View a specific Account Details", response = AccountResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved account details"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping(value = "/{accountNumber}")
-    public ResponseEntity<ResponseDTO<AccountDTO>> getAccount(@PathVariable String accountNumber) {
+    public ResponseEntity<ResponseDTO<AccountResponseDTO>> getAccount(@PathVariable String accountNumber) {
         //todo hateoas
         Optional<AccountEntity> accountEntity = accountService.findByAccountNumber(accountNumber);
         return accountEntity
-                .map(account -> ResponseEntity.ok().body(accountService.createAccountResponse(AccountDTO.form(account), ResponseCode.FOUND_CONTENT)))
+                .map(account -> ResponseEntity.ok().body(accountService.createAccountResponse(AccountResponseDTO.form(account), ResponseCode.FOUND_CONTENT)))
                 .orElse(ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(null));
     }
 
-    @ApiOperation(value = "Create Account", response = AccountDTO.class)
+    @ApiOperation(value = "Create Account", response = AccountResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "The Account successfully is created"),
             @ApiResponse(code = 500, message = "The Account could not be created")
     })
     @PostMapping
-    public ResponseEntity<ResponseDTO<AccountDTO>> createAccount(@RequestBody AccountDTO accountDTO) {
-        AccountEntity savedAccount = accountService.save(AccountDTO.to(accountDTO));
+    public ResponseEntity<ResponseDTO<AccountResponseDTO>> createAccount(@RequestBody AccountResponseDTO accountDTO) {
+        AccountEntity savedAccount = accountService.save(AccountResponseDTO.to(accountDTO));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(accountService.createAccountResponse(AccountDTO.form(savedAccount), ResponseCode.SUCCESS));
+                .body(accountService.createAccountResponse(AccountResponseDTO.form(savedAccount), ResponseCode.SUCCESS));
     }
 
-    @ApiOperation(value = "Update Account", response = AccountDTO.class)
+    @ApiOperation(value = "Update Account", response = AccountResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 201, message = "The Account successfully is created"),
             @ApiResponse(code = 404, message = "The Account could not be created")
     })
     @PutMapping
-    public ResponseEntity<ResponseDTO<AccountDTO>> updateAccount(@RequestBody AccountDTO accountDTO) {
-        AccountEntity savedAccount = accountService.save(AccountDTO.to(accountDTO));
+    public ResponseEntity<ResponseDTO<AccountResponseDTO>> updateAccount(@RequestBody AccountResponseDTO accountDTO) {
+        AccountEntity savedAccount = accountService.save(AccountResponseDTO.to(accountDTO));
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(accountService.createAccountResponse(AccountDTO.form(savedAccount), ResponseCode.SUCCESS));
+                .body(accountService.createAccountResponse(AccountResponseDTO.form(savedAccount), ResponseCode.SUCCESS));
     }
 
-    @ApiOperation(value = "Deleting a specific account", response = AccountDTO.class)
+    @ApiOperation(value = "Deleting a specific account", response = AccountResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully deleted"),
             @ApiResponse(code = 404, message = "The resource you were trying to delete is not found")

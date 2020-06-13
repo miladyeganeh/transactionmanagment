@@ -31,7 +31,7 @@ public class CardController {
         this.cardService = cardService;
     }
 
-    @ApiOperation(value = "View a list of available cards", response = CardDTO.class)
+    @ApiOperation(value = "View a list of available cards", response = ResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved card list"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
@@ -50,7 +50,7 @@ public class CardController {
                 .build());
     }
 
-    @ApiOperation(value = "View a specific card details", response = CardDTO.class)
+    @ApiOperation(value = "View a specific card details", response = ResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved card"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")

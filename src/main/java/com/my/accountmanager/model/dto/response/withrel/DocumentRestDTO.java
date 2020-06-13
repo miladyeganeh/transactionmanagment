@@ -1,10 +1,15 @@
 package com.my.accountmanager.model.dto.response.withrel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.my.accountmanager.controller.CurrencyController;
+import com.my.accountmanager.controller.DocumentController;
 import com.my.accountmanager.domain.entity.DocumentEntity;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class DocumentRestDTO extends RepresentationModel<DocumentRestDTO> {
 
@@ -25,8 +30,15 @@ public class DocumentRestDTO extends RepresentationModel<DocumentRestDTO> {
         documentRestDTO.setStatus(documentEntity.getStatus().toString());
         documentRestDTO.setTotalAmount(documentEntity.getTotalAmount());
         documentRestDTO.setCurrencyID(documentEntity.getCurrency().getId());
+        return setLink(documentRestDTO);
+    }
+
+    private static DocumentRestDTO setLink(DocumentRestDTO documentRestDTO) {
+        documentRestDTO.add(linkTo(methodOn(DocumentController.class).getDocument(documentRestDTO.getId())).withSelfRel());
+        documentRestDTO.add(linkTo(methodOn(CurrencyController.class).getCurrency(documentRestDTO.getCurrencyID())).withRel("Currency"));
         return documentRestDTO;
     }
+
     public Long getId() {
         return id;
     }

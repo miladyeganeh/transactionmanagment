@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  mysql-service:
+    image: library/mysql:5.7
+    networks:
+      - mobilab-network
+    restart: always
+    environment:
+      - MYSQL_ROOT_PASSWORD=password
+      - MYSQL_DATEBASE=accountmanager
+  api-service:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+    - "8080:8080"
+    networks:
+      - mobilab-network
+    depends_on:
+      - mysql-service
+
+networks:
+  mobilab-network:
+    driver: bridge

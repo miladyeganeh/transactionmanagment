@@ -30,7 +30,7 @@ public class CustomerController {
         this.customerService = customerService;
     }
 
-    @ApiOperation(value = "View a specific customer details", response = CustomerDTO.class)
+    @ApiOperation(value = "View a specific customer details", response = ResponseDTO.class)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "Successfully retrieved details"),
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")

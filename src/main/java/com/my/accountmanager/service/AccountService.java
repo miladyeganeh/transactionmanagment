@@ -1,8 +1,8 @@
 package com.my.accountmanager.service;
 
 import com.my.accountmanager.domain.entity.AccountEntity;
-import com.my.accountmanager.model.dto.AccountDTO;
 import com.my.accountmanager.model.dto.response.ResponseDTO;
+import com.my.accountmanager.model.dto.response.withrel.AccountResponseDTO;
 import com.my.accountmanager.model.enums.ResponseCode;
 
 import java.util.Optional;
@@ -15,6 +15,6 @@ public interface AccountService extends BaseCrudService<AccountEntity> {
     Optional<AccountEntity> findById(Long id);
     AccountEntity save(AccountEntity accountEntity);
     Optional<AccountEntity> findActiveAccountByAccountNumber(String accountNumber);
-    AccountDTO persist(AccountDTO accountRequestDTO);
-    ResponseDTO<AccountDTO> createAccountResponse(AccountDTO accountDTO, ResponseCode code);
+    AccountResponseDTO persist(AccountResponseDTO accountRequestDTO);
+    ResponseDTO<AccountResponseDTO> createAccountResponse(AccountResponseDTO accountDTO, ResponseCode code);
 }

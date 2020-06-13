@@ -1,10 +1,17 @@
 package com.my.accountmanager.model.dto.response.withrel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.my.accountmanager.controller.AccountController;
+import com.my.accountmanager.controller.CurrencyController;
+import com.my.accountmanager.controller.DocumentController;
+import com.my.accountmanager.controller.TransactionController;
 import com.my.accountmanager.domain.entity.TransactionEntity;
 import org.springframework.hateoas.RepresentationModel;
 
 import java.util.Date;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class TransactionRestDTO extends RepresentationModel<TransactionRestDTO> {
 
@@ -41,6 +48,15 @@ public class TransactionRestDTO extends RepresentationModel<TransactionRestDTO> 
             transactionRestDTO.setMainTransactionID(transactionEntity.getMainTransaction().getTransactionID());
         }
         transactionRestDTO.setDocumentID(transactionEntity.getDocumentEntity().getId());
+        return setLinks(transactionRestDTO);
+    }
+
+    private static TransactionRestDTO setLinks(TransactionRestDTO transactionRestDTO) {
+        transactionRestDTO.add(linkTo(methodOn(TransactionController.class).getTransaction(transactionRestDTO.getTransactionID())).withSelfRel());
+        transactionRestDTO.add(linkTo(methodOn(AccountController.class).getAccount(transactionRestDTO.getSourceAccountNumber())).withRel("Source Account"));
+        transactionRestDTO.add(linkTo(methodOn(AccountController.class).getAccount(transactionRestDTO.getDestinationAccountNumber())).withRel("Destination Account"));
+        transactionRestDTO.add(linkTo(methodOn(CurrencyController.class).getCurrency(transactionRestDTO.getCurrencyID())).withRel("Currency"));
+        transactionRestDTO.add(linkTo(methodOn(DocumentController.class).getDocument(transactionRestDTO.getDocumentID())).withRel("Document"));
         return transactionRestDTO;
     }
 

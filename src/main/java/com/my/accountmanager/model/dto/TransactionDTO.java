@@ -1,6 +1,7 @@
 package com.my.accountmanager.model.dto;
 
 import com.my.accountmanager.domain.entity.TransactionEntity;
+import com.my.accountmanager.model.dto.response.withrel.AccountResponseDTO;
 import org.modelmapper.ModelMapper;
 
 import java.io.Serializable;
@@ -20,8 +21,8 @@ public class TransactionDTO implements Serializable {
     private String cvv;
     private String expireDateMonth;
     private String expireDateYear;
-    private AccountDTO sourceAccount;
-    private AccountDTO destinationAccount;
+    private AccountResponseDTO sourceAccount;
+    private AccountResponseDTO destinationAccount;
 
     public static TransactionEntity from(TransactionDTO transactionDTO) {
         TransactionEntity transactionEntity = new ModelMapper().map(transactionDTO, TransactionEntity.class);
@@ -32,10 +33,10 @@ public class TransactionDTO implements Serializable {
         ModelMapper modelMapper = new ModelMapper();
         TransactionDTO transactionDTO = modelMapper.map(transactionEntity, TransactionDTO.class);
         if (transactionDTO.getSourceAccount() != null) {
-            transactionDTO.setSourceAccount(AccountDTO.form(transactionEntity.getSourceAccount()));
+            transactionDTO.setSourceAccount(AccountResponseDTO.form(transactionEntity.getSourceAccount()));
         }
         if (transactionDTO.getDestinationAccount() != null) {
-            transactionDTO.setDestinationAccount(AccountDTO.form(transactionEntity.getDestinationAccount()));
+            transactionDTO.setDestinationAccount(AccountResponseDTO.form(transactionEntity.getDestinationAccount()));
         }
 
         return transactionDTO;
@@ -137,19 +138,19 @@ public class TransactionDTO implements Serializable {
         this.expireDateYear = expireDateYear;
     }
 
-    public AccountDTO getSourceAccount() {
+    public AccountResponseDTO getSourceAccount() {
         return sourceAccount;
     }
 
-    public void setSourceAccount(AccountDTO sourceAccount) {
+    public void setSourceAccount(AccountResponseDTO sourceAccount) {
         this.sourceAccount = sourceAccount;
     }
 
-    public AccountDTO getDestinationAccount() {
+    public AccountResponseDTO getDestinationAccount() {
         return destinationAccount;
     }
 
-    public void setDestinationAccount(AccountDTO destinationAccount) {
+    public void setDestinationAccount(AccountResponseDTO destinationAccount) {
         this.destinationAccount = destinationAccount;
     }
 }
