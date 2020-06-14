@@ -54,7 +54,6 @@ public class AccountResponseDTO extends RepresentationModel<AccountResponseDTO> 
         return setLinks(accountDTO);
     }
 
-
     //TODO add  deposit link
     private static AccountResponseDTO setLinks(AccountResponseDTO accountDTO) {
         accountDTO.add(linkTo(methodOn(AccountController.class).getAccount(accountDTO.getAccountNumber())).withSelfRel());

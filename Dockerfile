@@ -13,5 +13,5 @@ ENV ARTIFACT_NAME=account-manager.jar
 ENV APP_HOME=/usr/app/
 WORKDIR $APP_HOME
 COPY --from=TEMP_BUILD_IMAGE $APP_HOME/build/libs/$ARTIFACT_NAME .
-EXPOSE 8080
+EXPOSE 9090
 CMD ["sh", "-c", "java -jar -Dspring.profiles.active=docker ${ARTIFACT_NAME}"]

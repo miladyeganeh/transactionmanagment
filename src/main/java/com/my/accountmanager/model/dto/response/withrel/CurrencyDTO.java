@@ -2,20 +2,27 @@ package com.my.accountmanager.model.dto.response.withrel;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.my.accountmanager.domain.entity.CurrencyEntity;
-import org.springframework.hateoas.RepresentationModel;
 
-public class CurrencyRestDTO extends RepresentationModel<CurrencyRestDTO> {
+public class CurrencyDTO {
 
     private Long id;
     private String code;
     private String name;
 
-    public static CurrencyRestDTO from (CurrencyEntity currencyEntity) {
-        CurrencyRestDTO currencyRestDTO = new CurrencyRestDTO();
+    public static CurrencyDTO from (CurrencyEntity currencyEntity) {
+        CurrencyDTO currencyRestDTO = new CurrencyDTO();
         currencyRestDTO.setId(currencyEntity.getId());
         currencyRestDTO.setCode(currencyEntity.getCode());
         currencyRestDTO.setName(currencyEntity.getName());
         return currencyRestDTO;
+    }
+
+    public static CurrencyEntity to (CurrencyDTO currencyDTO) {
+        CurrencyEntity currencyEntity = new CurrencyEntity();
+        currencyEntity.setId(currencyDTO.getId());
+        currencyEntity.setCode(currencyDTO.getCode());
+        currencyEntity.setName(currencyDTO.getName());
+        return currencyEntity;
     }
 
     public Long getId() {

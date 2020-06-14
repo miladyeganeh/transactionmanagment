@@ -41,6 +41,6 @@ public class DocumentController {
                         .withData(DocumentRestDTO.from(document))
                         .withCode(ResponseCode.FOUND_CONTENT).withDate(new Date())
                         .build()))
-                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).body(null));
+                .orElse(ResponseEntity.status(HttpStatus.NOT_FOUND).build());
     }
 }

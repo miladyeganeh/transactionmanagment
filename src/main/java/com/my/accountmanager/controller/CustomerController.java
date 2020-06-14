@@ -36,7 +36,7 @@ public class CustomerController {
             @ApiResponse(code = 404, message = "The resource you were trying to reach is not found")
     })
     @GetMapping(value = "/{id}")
-    public ResponseEntity<ResponseDTO<CustomerDTO>> getCustomer (@PathVariable Long id) {
+    public ResponseEntity<ResponseDTO<CustomerDTO>> getCustomer(@PathVariable Long id) {
         logger.debug(":::::Start getCustomer, id: " + id);
         Optional<CustomerDTO> customerDTO = this.customerService.getCustomerByID(id);
         logger.debug(":::::Finish getCustomer");

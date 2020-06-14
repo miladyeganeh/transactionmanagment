@@ -1,5 +1,6 @@
 package com.my.accountmanager.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.my.accountmanager.domain.enums.CardType;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
@@ -44,6 +45,7 @@ public class CardEntity extends Auditable {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "ACCOUNT_ID")
+    @JsonIgnore
     private AccountEntity account;
 
     @ManyToOne(cascade = CascadeType.ALL)

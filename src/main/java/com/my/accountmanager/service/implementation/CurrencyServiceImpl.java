@@ -42,7 +42,7 @@ public class CurrencyServiceImpl extends BaseCrudServiceImpl<CurrencyEntity, Cur
 
     @Override
     public CurrencyThirdPartyDTO getRate() {
-        return getRate(null);
+        return getRate("");
     }
 
     @Override

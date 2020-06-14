@@ -7,7 +7,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    MessageSourceConfig messageSourceConfig;
+    private final MessageSourceConfig messageSourceConfig;
 
     public WebConfig(MessageSourceConfig messageSourceConfig) {
         this.messageSourceConfig = messageSourceConfig;

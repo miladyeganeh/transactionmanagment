@@ -60,7 +60,7 @@ class DepositServiceImplTest {
     @Test
     void createDeposit_If_Created_Successfully() {
         Mockito.when(depositRepository.save(any())).thenReturn(mockedDepositEntity);
-        Optional<DepositDTO> obtainedEntity = this.depositService.createDeposit(DepositDTO.to(mockedDepositEntity));
+        Optional<DepositDTO> obtainedEntity = this.depositService.createDeposit(DepositDTO.tofrom(mockedDepositEntity));
         assertThat(obtainedEntity.isEmpty(), is(false));
         assertThat(obtainedEntity.get().getDepositNumber(), is(mockedDepositEntity.getDepositNumber()));
     }
@@ -68,14 +68,14 @@ class DepositServiceImplTest {
     @Test
     void createDeposit_If_Created_Fail() {
         Mockito.when(depositRepository.save(any())).thenReturn(null);
-        Optional<DepositDTO> obtainedEntity = this.depositService.createDeposit(DepositDTO.to(mockedDepositEntity));
+        Optional<DepositDTO> obtainedEntity = this.depositService.createDeposit(DepositDTO.tofrom(mockedDepositEntity));
         assertThat(obtainedEntity.isEmpty(), is(true));
     }
 
     @Test
     void updateDeposit_If_Found_Deposit() {
         Mockito.when(depositRepository.getByDepositNumber(any())).thenReturn(mockedDepositEntity);
-        Optional<DepositDTO> obtainedEntity = this.depositService.updateDeposit(DepositDTO.to(mockedDepositEntity));
+        Optional<DepositDTO> obtainedEntity = this.depositService.updateDeposit(DepositDTO.tofrom(mockedDepositEntity));
         assertThat(obtainedEntity.isEmpty(), is(false));
         assertThat(obtainedEntity.get().getIsActive(), is(mockedDepositEntity.getIsActive()));
         assertThat(obtainedEntity.get().getIsDefault(), is(mockedDepositEntity.getIsDefault()));
@@ -85,7 +85,7 @@ class DepositServiceImplTest {
     @Test
     void updateDeposit_If_Not_Found_Deposit () {
         Mockito.when(depositRepository.getByDepositNumber(any())).thenReturn(null);
-        Optional<DepositDTO> obtainedEntity = this.depositService.updateDeposit(DepositDTO.to(mockedDepositEntity));
+        Optional<DepositDTO> obtainedEntity = this.depositService.updateDeposit(DepositDTO.tofrom(mockedDepositEntity));
         assertThat(obtainedEntity.isEmpty(), is(true));
     }
 

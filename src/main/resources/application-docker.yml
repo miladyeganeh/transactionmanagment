@@ -1,2 +1,19 @@
 spring:
-  profiles: docker
+  application:
+    name: accountmanager
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+  datasource:
+    hikari:
+      connection-test-query: select 1 from dual
+      minimum-idle: 1
+      maximum-pool-size: 5
+    url: jdbc:mysql://mysql-service:${DATABASE_PORT:3306}/${MYSQL_DATEBASE:accountmanager}?useSSL=false&allowPublicKeyRetrieval=true
+    username: ${MYSQL_USER:sa}
+    password: ${MYSQL_PASSWORD:password}
+#    driver-class-name: com.mysql.jdbc.Driver
+  jackson:
+    default-property-inclusion: non_null

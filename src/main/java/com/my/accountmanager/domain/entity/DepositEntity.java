@@ -1,5 +1,6 @@
 package com.my.accountmanager.domain.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.*;
@@ -28,6 +29,7 @@ public class DepositEntity extends Auditable {
 
     @ManyToOne(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinColumn(name = "ACCOUNT_ID", nullable = false)
+    @JsonIgnore
     private AccountEntity account;
 
     @OneToMany(mappedBy = "deposit", cascade = CascadeType.ALL)

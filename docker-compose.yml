@@ -2,23 +2,36 @@ version: '3.7'
 
 services:
   mysql-service:
-    image: library/mysql:5.7
+    image: mysql:8.0.20
     networks:
       - mobilab-network
     restart: always
     environment:
       - MYSQL_ROOT_PASSWORD=password
       - MYSQL_DATEBASE=accountmanager
-  api-service:
+      - MYSQL_USER=sa
+      - MYSQL_PASSWORD=password
+    ports:
+    - "3306:3306"
+  account-manager-service:
+    container_name: account-manager-service
     build:
       context: ./
       dockerfile: Dockerfile
+    expose:
+      - "9090"
     ports:
-    - "8080:8080"
+      - "9090:9090"
     networks:
       - mobilab-network
     depends_on:
       - mysql-service
+    environment:
+      - DATABASE_HOST=mysql-service
+      - DATABASE_USER=sa
+      - DATABASE_PASSWORD=password
+      - DATABASE_NAME=accountmanager
+      - DATABASE_PORT=3306
 
 networks:
   mobilab-network:

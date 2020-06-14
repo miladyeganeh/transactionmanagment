@@ -15,12 +15,7 @@ public class DepositDTO implements Serializable {
     private String accountNumber;
     private Set<TransactionRequestDTO> transaction;
 
-//  destination property com.my.accountmanager.domain.entity.TransactionEntity.setId() matches multiple source property hierarchies:
-//
-//            com.my.accountmanager.model.dto.request.TransactionRequestDTO.getTrxID()
-//            com.my.accountmanager.model.dto.request.TransactionRequestDTO.getTerminalId()
-
-    public static DepositEntity from(DepositDTO depositDTO) {
+    public static DepositEntity to(DepositDTO depositDTO) {
         DepositEntity depositEntity = null;
         ModelMapper modelMapper = new ModelMapper();
         modelMapper.getConfiguration().setAmbiguityIgnored(true);
@@ -30,10 +25,10 @@ public class DepositDTO implements Serializable {
         return depositEntity;
     }
 
-    public static DepositDTO to(DepositEntity depositEntity) {
+    public static DepositDTO tofrom(DepositEntity depositEntity) {
         DepositDTO depositDTO = new ModelMapper().map(depositEntity, DepositDTO.class);
         if (depositEntity.getTransaction() != null) {
-            depositEntity.getTransaction().forEach(TransactionDTO::to);
+            depositEntity.getTransaction().forEach(TransactionDTO::from);
         }
         return depositDTO;
     }

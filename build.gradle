@@ -29,20 +29,19 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'
     implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
-//    implementation 'org.flywaydb:flyway-core'
     implementation 'org.hibernate:hibernate-envers:5.4.17.Final'
     implementation 'javax.validation:validation-api:2.0.0.Final'
-    implementation 'com.h2database:h2:1.4.200'
+    implementation 'com.h2database:h2:1.4.199'
     implementation 'org.modelmapper:modelmapper:0.7.5'
+//    implementation 'mysql:mysql-connector-java:8.0.20'
+    implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.0'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.3.0.RELEASE'
     compile("org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE") { true }
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
-    runtimeOnly 'com.h2database:h2'
-    testCompile "org.springframework.boot:spring-boot-starter-test", { exclude group: 'junit', module: 'junit' }
-    testCompile "org.springframework.security:spring-security-test"
+    testImplementation'com.h2database:h2'
     testCompile 'com.h2database:h2:1.4.199'
     testCompile 'org.easymock:easymock:3.4', { exclude group: 'org.hamcrest', module: 'hamcrest-core' }
     testImplementation('org.hamcrest:hamcrest:2.1')
@@ -55,4 +54,13 @@ dependencies {
 
 test {
     useJUnitPlatform()
+}
+
+task dockerBuild(){
+    doFirst {
+       bootJar {
+           archiveFileName.set(jarName)
+       }
+    }
+    finalizedBy(clean, build)
 }

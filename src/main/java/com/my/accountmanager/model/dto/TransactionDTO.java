@@ -24,21 +24,38 @@ public class TransactionDTO implements Serializable {
     private AccountResponseDTO sourceAccount;
     private AccountResponseDTO destinationAccount;
 
-    public static TransactionEntity from(TransactionDTO transactionDTO) {
+    public static TransactionEntity to(TransactionDTO transactionDTO) {
         TransactionEntity transactionEntity = new ModelMapper().map(transactionDTO, TransactionEntity.class);
         return transactionEntity;
     }
 
-    public static TransactionDTO to(TransactionEntity transactionEntity) {
+    public static TransactionDTO from(TransactionEntity transactionEntity) {
         ModelMapper modelMapper = new ModelMapper();
         TransactionDTO transactionDTO = modelMapper.map(transactionEntity, TransactionDTO.class);
         if (transactionDTO.getSourceAccount() != null) {
-            transactionDTO.setSourceAccount(AccountResponseDTO.form(transactionEntity.getSourceAccount()));
+            transactionDTO.getSourceAccount().setId(transactionEntity.getSourceAccount().getId());
+            transactionDTO.getSourceAccount().setBalance(transactionEntity.getSourceAccount().getBalance());
+            transactionDTO.getSourceAccount().setOpeningDate(transactionEntity.getSourceAccount().getOpeningDate());
+            transactionDTO.getSourceAccount().setAccountNumber(transactionEntity.getSourceAccount().getAccountNumber());
+            if (transactionEntity.getSourceAccount().getCustomer() != null) {
+                transactionDTO.getSourceAccount().setCustomerID(transactionEntity.getSourceAccount().getCustomer().getId());
+            }
+            if (transactionEntity.getSourceAccount().getCurrency() != null) {
+                transactionDTO.getSourceAccount().setCurrencyID(transactionEntity.getSourceAccount().getCurrency().getId());
+            }
         }
         if (transactionDTO.getDestinationAccount() != null) {
-            transactionDTO.setDestinationAccount(AccountResponseDTO.form(transactionEntity.getDestinationAccount()));
+            transactionDTO.getDestinationAccount().setId(transactionEntity.getDestinationAccount().getId());
+            transactionDTO.getDestinationAccount().setBalance(transactionEntity.getDestinationAccount().getBalance());
+            transactionDTO.getDestinationAccount().setOpeningDate(transactionEntity.getDestinationAccount().getOpeningDate());
+            transactionDTO.getDestinationAccount().setAccountNumber(transactionEntity.getDestinationAccount().getAccountNumber());
+            if (transactionEntity.getDestinationAccount().getCustomer() != null) {
+                transactionDTO.getDestinationAccount().setCustomerID(transactionEntity.getDestinationAccount().getCustomer().getId());
+            }
+            if (transactionEntity.getSourceAccount().getCurrency() != null) {
+                transactionDTO.getDestinationAccount().setCurrencyID(transactionEntity.getDestinationAccount().getCurrency().getId());
+            }
         }
-
         return transactionDTO;
     }
 

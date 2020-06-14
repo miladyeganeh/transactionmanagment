@@ -39,10 +39,10 @@ public class CardController {
     @GetMapping
     public ResponseEntity<ResponseDTO<List<CardDTO>>> getAll() {
         List<CardEntity> allCards = cardService.getAll();
-        List<CardDTO> cardDTOS = allCards.stream().map(CardDTO::from).collect(Collectors.toList());
-        if (cardDTOS.isEmpty()) {
+        if (allCards.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+        List<CardDTO> cardDTOS = allCards.stream().map(CardDTO::from).collect(Collectors.toList());
         return ResponseEntity.ok(ResponseDTO.<List<CardDTO>>builder()
                 .withData(cardDTOS)
                 .withDate(new Date())

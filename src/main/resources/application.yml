@@ -23,6 +23,3 @@ spring:
     password: password
   jackson:
     default-property-inclusion: non_null
-
-#logging:
-#  config: classpath:log/log4j2.yml

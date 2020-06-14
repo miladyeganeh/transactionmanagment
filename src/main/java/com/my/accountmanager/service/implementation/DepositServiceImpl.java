@@ -35,18 +35,18 @@ public class DepositServiceImpl extends BaseCrudServiceImpl<DepositEntity, Depos
             return Optional.empty();
         }
         logger.debug(":::::Finish getByDepositNumber");
-        return Optional.of(DepositDTO.to(depositEntity));
+        return Optional.of(DepositDTO.tofrom(depositEntity));
     }
 
     @Override
     public Optional<DepositDTO> createDeposit(DepositDTO depositDTO) {
         logger.debug(":::::Start createDeposit, depositNumber: " + depositDTO.getDepositNumber());
-        DepositEntity saveDepositEntity = super.save(DepositDTO.from(depositDTO));
+        DepositEntity saveDepositEntity = super.save(DepositDTO.to(depositDTO));
         if (saveDepositEntity == null) {
             return Optional.empty();
         }
         logger.debug(":::::Finish createDeposit");
-        return Optional.of(DepositDTO.to(saveDepositEntity));
+        return Optional.of(DepositDTO.tofrom(saveDepositEntity));
     }
 
     @Override
@@ -61,7 +61,7 @@ public class DepositServiceImpl extends BaseCrudServiceImpl<DepositEntity, Depos
         depositEntity.setDepositNumber(depositDTO.getDepositNumber());
         save(depositEntity);
         logger.debug(":::::Finish updateDeposit");
-        return Optional.of(DepositDTO.to(depositEntity));
+        return Optional.of(DepositDTO.tofrom(depositEntity));
     }
 
     @Override
