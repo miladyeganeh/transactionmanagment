@@ -39,7 +39,6 @@ public class CustomerController {
     public ResponseEntity<ResponseDTO<CustomerDTO>> getCustomer(@PathVariable Long id) {
         logger.debug(":::::Start getCustomer, id: " + id);
         Optional<CustomerDTO> customerDTO = this.customerService.getCustomerByID(id);
-        logger.debug(":::::Finish getCustomer");
         return customerDTO
                 .map(customer -> ResponseEntity.ok().body(ResponseDTO.<CustomerDTO>builder().withMessage("")
                                 .withData(customer)

@@ -8,6 +8,8 @@ import com.my.accountmanager.service.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -23,6 +25,7 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "api/v1/reports")
 public class ReportController {
+    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
     private final TransactionService transactionService;
 
@@ -38,6 +41,7 @@ public class ReportController {
     @GetMapping(value = "/transactions")
     public ResponseEntity<ResponseDTO<List<TransactionRestDTO>>> getTransactionsReport (@RequestParam(value = "page" ,defaultValue = "0") int page,
                                                                                        @RequestParam(value = "limit" ,defaultValue = "10") int limit){
+        logger.debug(":::::Start getTransactionsReport, page: " + page + ", limit:" + limit);
         List<TransactionRestDTO> transactionRestDTOS = new ArrayList<>();
         Page<TransactionEntity> pageableTransactions = transactionService.getPageableTrx(page, limit);
         if (pageableTransactions.isEmpty()) {

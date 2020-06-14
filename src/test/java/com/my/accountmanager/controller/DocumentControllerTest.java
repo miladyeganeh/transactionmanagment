@@ -1,6 +1,8 @@
 package com.my.accountmanager.controller;
 
+import com.my.accountmanager.domain.entity.CurrencyEntity;
 import com.my.accountmanager.domain.entity.DocumentEntity;
+import com.my.accountmanager.domain.enums.DocumentStatus;
 import com.my.accountmanager.model.dto.response.ResponseDTO;
 import com.my.accountmanager.model.dto.response.withrel.DocumentRestDTO;
 import com.my.accountmanager.service.DocumentService;
@@ -32,6 +34,10 @@ class DocumentControllerTest {
     void getDocument_ifFound() {
         DocumentEntity mockedDocument = new DocumentEntity();
         mockedDocument.setId(1L);
+        mockedDocument.setStatus(DocumentStatus.ISSUED);
+        CurrencyEntity currency = new CurrencyEntity();
+        currency.setId(2L);
+        mockedDocument.setCurrency(currency);
         when(this.documentService.findById(any())).thenReturn(Optional.of(mockedDocument));
         ResponseEntity<ResponseDTO<DocumentRestDTO>> response = documentController.getDocument(1L);
         assertThat(response.getStatusCode().value(), is(HttpStatus.OK.value()));

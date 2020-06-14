@@ -8,6 +8,8 @@ import com.my.accountmanager.service.CardService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -23,6 +25,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(value = "api/v1/cards")
 public class CardController {
+    private static final Logger logger = LoggerFactory.getLogger(CardController.class);
 
     private final CardService cardService;
 
@@ -38,6 +41,7 @@ public class CardController {
     })
     @GetMapping
     public ResponseEntity<ResponseDTO<List<CardDTO>>> getAll() {
+        logger.debug(":::::Start getAll");
         List<CardEntity> allCards = cardService.getAll();
         if (allCards.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -57,6 +61,7 @@ public class CardController {
     })
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDTO<CardDTO>> getCard(@PathVariable Long id) {
+        logger.debug(":::::Start getCard, id:" + id);
         Optional<CardEntity> cardEntity = cardService.findById(id);
         return cardEntity.map(card -> ResponseEntity.ok(ResponseDTO.<CardDTO>builder()
                 .withData(CardDTO.from(card))

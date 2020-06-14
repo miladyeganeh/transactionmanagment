@@ -15,6 +15,8 @@ import com.my.accountmanager.service.TransactionService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
@@ -33,6 +35,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RestController
 @RequestMapping(value = "api/v1/transactions")
 public class TransactionController {
+    private static final Logger logger = LoggerFactory.getLogger(ReportController.class);
 
     private final TrxProcessorFactory trxProcessorFactory;
     private final TransactionRequestService trxReqService;
@@ -48,6 +51,7 @@ public class TransactionController {
 
     @GetMapping(value = "/{transactionID}")
     public ResponseEntity<TransactionRestDTO> getTransaction(@PathVariable String transactionID) {
+        logger.debug(":::::Start getTransaction, transactionID: " + transactionID);
         Optional<TransactionEntity> transactionEntity = transactionService.findByTransactionID(transactionID);
         if (transactionEntity.isPresent()) {
             TransactionRestDTO from = TransactionRestDTO.from(transactionEntity.get());
@@ -64,9 +68,7 @@ public class TransactionController {
     })
     @PostMapping
     public ResponseEntity<ResponseDTO<TransactionResponseDTO>> createTransaction(@RequestBody TransactionRequestDTO transactionRequest) {
-        //todo add validation for mandatory fields
-        //todo handle dto extra fields
-
+        logger.debug(":::::Start createTransaction, trxDate: " + transactionRequest.getTrxDate());
         TrxProcessor trxProcessor = trxProcessorFactory.getInstance(TransactionType.getByValue(transactionRequest.getTransactionType()));
         try {
             TransactionResponseDTO transactionResponseDTO = trxProcessor.doTransaction(transactionRequest);
@@ -91,6 +93,7 @@ public class TransactionController {
     })
     @GetMapping("transaction-request/{transactionID}")
     public ResponseEntity<ResponseDTO<TransactionResponseDTO>> getTransactionRequest(@PathVariable String transactionID) {
+        logger.debug(":::::Start getTransactionRequest, transactionID: " + transactionID);
         Optional<TransactionRequestEntity> transaction = trxReqService.findByTransactionID(transactionID);
         return transaction
                 .map(trx -> ResponseEntity.ok().body(trxReqService.createTransactionResponse(TransactionResponseDTO.from(trx))))

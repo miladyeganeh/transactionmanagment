@@ -3,16 +3,15 @@ package com.my.accountmanager.startup;
 import com.my.accountmanager.domain.entity.*;
 import com.my.accountmanager.domain.enums.AccountStatus;
 import com.my.accountmanager.domain.enums.CardType;
+import com.my.accountmanager.model.dto.CurrencyThirdPartyDTO;
 import com.my.accountmanager.service.AccountService;
 import com.my.accountmanager.service.CurrencyService;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Component;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Component
 public class StartupListener {
@@ -27,33 +26,37 @@ public class StartupListener {
     }
 
     @EventListener(ApplicationReadyEvent.class)
-    public void initializeValue () {
-        this.currencyEntity = this.currencyService.save(createCurrency());
+    public void initializeValue() {
+        if (this.currencyService.getAll().isEmpty()) {
+            createCurrency().forEach(currencyService::save);
+        }
         this.accountService.save(createAccount());
         this.accountService.save(createAccount2());
         this.accountService.getAll();
     }
 
     private AccountEntity createAccount() {
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setBalance(1000D);
-        accountEntity.setAccountNumber("400");
-        accountEntity.setStatus(AccountStatus.ACTIVE);
-        accountEntity.setIsActive(true);
-        accountEntity.setOpeningDate(new Date());
-        CustomerEntity customer = createCustomer();
-        accountEntity.setCustomer(customer);
-        accountEntity.setCurrency(this.currencyEntity);
-        Set<CardEntity> cards = createCards();
-        cards.forEach(cardEntity -> {
-            cardEntity.setCustomer(customer);
-            cardEntity.setAccount(accountEntity);
+        return accountService.findByAccountNumber("400").orElseGet(() -> {
+            AccountEntity accountEntity = new AccountEntity();
+            accountEntity.setBalance(1000D);
+            accountEntity.setAccountNumber("400");
+            accountEntity.setStatus(AccountStatus.ACTIVE);
+            accountEntity.setIsActive(true);
+            accountEntity.setOpeningDate(new Date());
+            CustomerEntity customer = createCustomer();
+            accountEntity.setCustomer(customer);
+            accountEntity.setCurrency(this.currencyEntity);
+            Set<CardEntity> cards = createCards();
+            cards.forEach(cardEntity -> {
+                cardEntity.setCustomer(customer);
+                cardEntity.setAccount(accountEntity);
+            });
+            accountEntity.setCards(cards);
+            Set<DepositEntity> deposits = createDeposit();
+            deposits.forEach(deposit -> deposit.setAccount(accountEntity));
+            accountEntity.setDeposit(deposits);
+            return accountEntity;
         });
-        accountEntity.setCards(cards);
-        Set<DepositEntity> deposits = createDeposit();
-        deposits.forEach(deposit -> deposit.setAccount(accountEntity));
-        accountEntity.setDeposit(deposits);
-        return accountEntity;
     }
 
     private CustomerEntity createCustomer() {
@@ -67,14 +70,27 @@ public class StartupListener {
         return customerEntity;
     }
 
-    private CurrencyEntity createCurrency() {
-        CurrencyEntity currencyEntity = new CurrencyEntity();
-        currencyEntity.setName("EUR");
-        currencyEntity.setCode("EUR");
-        return currencyEntity;
+    private List<CurrencyEntity> createCurrency() {
+        CurrencyThirdPartyDTO rateInfo = currencyService.getRate();
+        List<CurrencyEntity> currencies = new ArrayList<>();
+        if (rateInfo != null) {
+            currencies = rateInfo.getRates().keySet().stream().map(code -> {
+                CurrencyEntity currencyEntity = new CurrencyEntity();
+                currencyEntity.setName(code);
+                currencyEntity.setCode(code);
+                return currencyEntity;
+            }).collect(Collectors.toList());
+            if (currencies.stream().noneMatch(x -> x.getCode().equals("EUR"))) {
+                CurrencyEntity currencyEntity = new CurrencyEntity();
+                currencyEntity.setName("EUR");
+                currencyEntity.setCode("EUR");
+                currencies.add(currencyEntity);
+            }
+        }
+        return currencies;
     }
 
-    private Set<CardEntity> createCards(){
+    private Set<CardEntity> createCards() {
         Set<CardEntity> cards = new HashSet<>();
         CardEntity card = new CardEntity();
         card.setCardPAN("1234.1234.1234.1234");
@@ -98,26 +114,28 @@ public class StartupListener {
     }
 
     private AccountEntity createAccount2() {
-        AccountEntity accountEntity = new AccountEntity();
-        accountEntity.setBalance(1000D);
-        accountEntity.setAccountNumber("500");
-        accountEntity.setStatus(AccountStatus.ACTIVE);
-        accountEntity.setIsActive(true);
-        accountEntity.setOpeningDate(new Date());
-        CustomerEntity customer = createCustomer2();
-        accountEntity.setCustomer(customer);
-        Optional<CurrencyEntity> currency = this.currencyService.findByCurrencyByCode("EUR");
-        currency.ifPresent(accountEntity::setCurrency);
-        Set<CardEntity> cards = createCards2();
-        cards.forEach(cardEntity -> {
-            cardEntity.setCustomer(customer);
-            cardEntity.setAccount(accountEntity);
+        return accountService.findByAccountNumber("500").orElseGet(() -> {
+            AccountEntity accountEntity = new AccountEntity();
+            accountEntity.setBalance(1000D);
+            accountEntity.setAccountNumber("500");
+            accountEntity.setStatus(AccountStatus.ACTIVE);
+            accountEntity.setIsActive(true);
+            accountEntity.setOpeningDate(new Date());
+            CustomerEntity customer = createCustomer2();
+            accountEntity.setCustomer(customer);
+            Optional<CurrencyEntity> currency = this.currencyService.findByCurrencyByCode("EUR");
+            currency.ifPresent(accountEntity::setCurrency);
+            Set<CardEntity> cards = createCards2();
+            cards.forEach(cardEntity -> {
+                cardEntity.setCustomer(customer);
+                cardEntity.setAccount(accountEntity);
+            });
+            accountEntity.setCards(cards);
+            Set<DepositEntity> deposits = createDeposit2();
+            deposits.forEach(deposit -> deposit.setAccount(accountEntity));
+            accountEntity.setDeposit(deposits);
+            return accountEntity;
         });
-        accountEntity.setCards(cards);
-        Set<DepositEntity> deposits = createDeposit2();
-        deposits.forEach(deposit -> deposit.setAccount(accountEntity));
-        accountEntity.setDeposit(deposits);
-        return accountEntity;
     }
 
     private CustomerEntity createCustomer2() {
@@ -132,7 +150,7 @@ public class StartupListener {
     }
 
 
-    private Set<CardEntity> createCards2(){
+    private Set<CardEntity> createCards2() {
         Set<CardEntity> cards = new HashSet<>();
         CardEntity card = new CardEntity();
         card.setCardPAN("4321.4321.4321.4321");

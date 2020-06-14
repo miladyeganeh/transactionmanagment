@@ -9,6 +9,8 @@ import com.my.accountmanager.service.AccountService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping("api/v1/accounts")
 public class AccountController {
+    private static final Logger logger = LoggerFactory.getLogger(AccountController.class);
 
     private final AccountService accountService;
 
@@ -37,6 +40,7 @@ public class AccountController {
     })
     @GetMapping(value = "/{accountNumber}")
     public ResponseEntity<ResponseDTO<AccountResponseDTO>> getAccount(@PathVariable String accountNumber) {
+        logger.debug("::::::Start getAccount, accountNumber: " + accountNumber);
         Optional<AccountEntity> accountEntity = this.accountService.findByAccountNumber(accountNumber);
         return accountEntity
                 .map(account -> ResponseEntity.ok().body(accountService.createAccountResponse(AccountResponseDTO.form(account), ResponseCode.FOUND_CONTENT)))
@@ -50,6 +54,7 @@ public class AccountController {
     })
     @PostMapping
     public ResponseEntity<ResponseDTO<AccountResponseDTO>> createAccount(@RequestBody AccountRequestDTO accountDTO) {
+        logger.debug("::::::Start createAccount, accountNumber: " + accountDTO.getAccountNumber());
         AccountResponseDTO accountResponseDTO = this.accountService.create(accountDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(accountService.createAccountResponse(accountResponseDTO, ResponseCode.SUCCESS));
@@ -62,6 +67,7 @@ public class AccountController {
     })
     @PutMapping
     public ResponseEntity<ResponseDTO<AccountResponseDTO>> updateAccount(@RequestBody AccountRequestDTO accountDTO) {
+        logger.debug("::::::Start updateAccount, accountNumber: " + accountDTO.getAccountNumber());
         AccountResponseDTO accountResponseDTO = this.accountService.persist(accountDTO);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(accountService.createAccountResponse(accountResponseDTO, ResponseCode.SUCCESS));
@@ -74,6 +80,7 @@ public class AccountController {
     })
     @DeleteMapping(value = "/{id}")
     public ResponseEntity<Void> deleteAccount(@PathVariable Long id) {
+        logger.debug("::::::Start deleteAccount, id: " + id);
         Optional<AccountEntity> detachedAccount = this.accountService.findById(id);
         detachedAccount.ifPresent(accountService::delete);
         return detachedAccount

@@ -2,6 +2,7 @@ plugins {
     id 'org.springframework.boot' version '2.3.0.RELEASE'
     id 'io.spring.dependency-management' version '1.0.9.RELEASE'
     id 'java'
+    id 'application'
 }
 
 group = 'com.my'
@@ -17,11 +18,7 @@ def profiles = 'develop'
 bootRun {
     args = ["--spring.profiles.active=" + profiles]
 }
-
-//configurations {
-//    compile.exclude module: 'spring-boot-starter-logging'
-//}
-
+mainClassName = 'com.my.accountmanager.AccountManager'
 dependencies {
     def withoutHamcrest = { exclude group: 'org.hamcrest', module: 'hamcrest-core' }
     def withoutJunit = { exclude group: 'junit', module: 'junit' }
@@ -31,19 +28,17 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     implementation 'org.hibernate:hibernate-envers:5.4.17.Final'
     implementation 'javax.validation:validation-api:2.0.0.Final'
-    implementation 'com.h2database:h2:1.4.199'
     implementation 'org.modelmapper:modelmapper:0.7.5'
-//    implementation 'mysql:mysql-connector-java:8.0.20'
+    implementation 'mysql:mysql-connector-java:8.0.20'
     implementation 'com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.11.0'
+    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
     compile group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     compile group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
     compile group: 'org.springframework.boot', name: 'spring-boot-starter-hateoas', version: '2.3.0.RELEASE'
     compile("org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE") { true }
-    implementation 'org.springframework.boot:spring-boot-starter-hateoas'
 
-    testImplementation'com.h2database:h2'
-    testCompile 'com.h2database:h2:1.4.199'
     testCompile 'org.easymock:easymock:3.4', { exclude group: 'org.hamcrest', module: 'hamcrest-core' }
+    testCompile group: 'com.h2database', name: 'h2', version: '1.4.200'
     testImplementation('org.hamcrest:hamcrest:2.1')
     testImplementation 'com.tngtech.archunit:archunit-junit5-api:0.11.0', { exclude group: 'junit', module: 'junit' }
     testImplementation 'junit:junit'

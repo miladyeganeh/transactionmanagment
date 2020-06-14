@@ -9,6 +9,8 @@ import com.my.accountmanager.service.CurrencyService;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,6 +24,7 @@ import java.util.Optional;
 @RestController
 @RequestMapping(value = "api/v1/currencies")
 public class CurrencyController {
+    private static final Logger logger = LoggerFactory.getLogger(CurrencyController.class);
 
     private final CurrencyService currencyService;
 
@@ -37,6 +40,7 @@ public class CurrencyController {
     })
     @GetMapping(value = "/exhgangerate")
     public ResponseEntity<ResponseDTO<CurrencyThirdPartyDTO>> getExchangesRate() {
+        logger.debug("::::::Start getExchangesRate");
         CurrencyThirdPartyDTO rates = this.currencyService.getRate();
         if (rates != null) {
             return ResponseEntity.ok().body(ResponseDTO.<CurrencyThirdPartyDTO>builder()
@@ -55,6 +59,7 @@ public class CurrencyController {
     })
     @GetMapping(value = "/{id}")
     public ResponseEntity<ResponseDTO<CurrencyDTO>> getCurrency(@PathVariable Long id) {
+        logger.debug("::::::Start getCurrency, id: " + id);
         Optional<CurrencyEntity> currencyEntity = this.currencyService.findById(id);
         return currencyEntity
                 .map(currency ->   ResponseEntity.ok().body(ResponseDTO.<CurrencyDTO>builder().withMessage("")

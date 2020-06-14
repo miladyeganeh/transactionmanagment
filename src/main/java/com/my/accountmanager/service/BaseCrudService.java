@@ -1,5 +1,6 @@
 package com.my.accountmanager.service;
 
+import java.util.List;
 import java.util.Optional;
 
 /**
@@ -10,5 +11,5 @@ public interface BaseCrudService<T> {
      T update(T obj);
      boolean delete(T obj);
      Optional<T> findById(Long id);
-     Iterable<T> getAll();
+     List<T> getAll();
 }
