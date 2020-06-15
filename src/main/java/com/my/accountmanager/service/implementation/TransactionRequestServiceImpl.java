@@ -15,9 +15,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 @Service
 public class TransactionRequestServiceImpl extends BaseCrudServiceImpl<TransactionRequestEntity, TransactionRequestRepository> implements TransactionRequestService {
 

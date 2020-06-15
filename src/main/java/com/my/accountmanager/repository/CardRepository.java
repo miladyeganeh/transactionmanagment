@@ -6,9 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
+
 @Repository
 public interface CardRepository extends JpaRepository<CardEntity, Long> {
     Optional<CardEntity> findByCardPAN(String cardPAN);

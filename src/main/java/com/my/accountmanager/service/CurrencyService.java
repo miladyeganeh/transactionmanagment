@@ -6,9 +6,6 @@ import com.my.accountmanager.model.dto.CurrencyThirdPartyDTO;
 
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 public interface CurrencyService extends BaseCrudService<CurrencyEntity> {
     CurrencyThirdPartyDTO getRate();
     CurrencyThirdPartyDTO getRate(String code);

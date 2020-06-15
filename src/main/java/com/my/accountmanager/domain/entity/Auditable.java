@@ -14,9 +14,6 @@ import java.util.Date;
 
 import static javax.persistence.TemporalType.TIMESTAMP;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 @MappedSuperclass
 @EntityListeners(AuditingEntityListener.class)
 public abstract class Auditable implements Serializable {

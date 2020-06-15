@@ -29,9 +29,7 @@ import java.util.Optional;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
-/**
- * @author M.Yeganeh on 01/06/2020.
- */
+
 @RestController
 @RequestMapping(value = "api/v1/transactions")
 public class TransactionController {

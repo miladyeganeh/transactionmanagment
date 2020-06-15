@@ -6,9 +6,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import java.util.Set;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "DEPOSIT")

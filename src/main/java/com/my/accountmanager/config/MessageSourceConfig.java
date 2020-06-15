@@ -12,9 +12,6 @@ import org.springframework.web.servlet.i18n.SessionLocaleResolver;
 
 import java.util.Locale;
 
-/**
- * @author M.Yeganeh on 01/06/2020.
- */
 @Configuration
 @AutoConfigureBefore({ValidationAutoConfiguration.class})
 public class MessageSourceConfig {

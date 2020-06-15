@@ -27,9 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.OptimisticLockException;
 import java.util.*;
 
-/**
- * @author M.Yeganeh on 01/06/2020.
- */
 @Component("transferTrx")
 public class TransferTrx extends TrxProcessor {
     private static final Logger logger = LoggerFactory.getLogger(TransferTrx.class);

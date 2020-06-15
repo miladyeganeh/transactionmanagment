@@ -6,9 +6,6 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 @Repository
 public interface TransactionRequestRepository extends JpaRepository<TransactionRequestEntity, Long> {
     Optional<TransactionRequestEntity> findByTrxID(String trxId);

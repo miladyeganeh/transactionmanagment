@@ -8,9 +8,6 @@ import javax.persistence.*;
 import java.util.Date;
 import java.util.UUID;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "TRANSACTION")

@@ -5,9 +5,6 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import javax.persistence.*;
 import javax.validation.constraints.Email;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 @Entity
 @EntityListeners(AuditingEntityListener.class)
 @Table(name = "CUSTOMER")

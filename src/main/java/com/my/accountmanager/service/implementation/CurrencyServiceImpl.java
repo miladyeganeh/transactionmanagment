@@ -15,9 +15,6 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 @Service
 public class CurrencyServiceImpl extends BaseCrudServiceImpl<CurrencyEntity, CurrencyRepository> implements CurrencyService {
     private static final Logger logger = LoggerFactory.getLogger(CurrencyServiceImpl.class);

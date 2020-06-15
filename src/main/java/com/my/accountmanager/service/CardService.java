@@ -6,9 +6,6 @@ import com.my.accountmanager.model.TrxInfo;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 public interface CardService extends BaseCrudService<CardEntity> {
     Optional<CardEntity> findById(Long id);
     List<CardEntity> getAll();

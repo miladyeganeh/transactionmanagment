@@ -11,10 +11,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
-
 @Service
 public class DocumentServiceImpl extends BaseCrudServiceImpl<DocumentEntity, DocumentRepository> implements DocumentService {
     private static final Logger logger = LoggerFactory.getLogger(DocumentServiceImpl.class);

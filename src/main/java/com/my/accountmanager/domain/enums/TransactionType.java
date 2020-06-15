@@ -4,9 +4,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-/**
- * @author M.Yeganeh on 01/06/2020.
- */
 public enum TransactionType {
     TRANSFER(1),
     WITHDRAW(2),

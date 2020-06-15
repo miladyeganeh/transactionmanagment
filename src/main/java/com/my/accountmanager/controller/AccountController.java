@@ -18,9 +18,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 01/06/2020.
- */
 @RestController
 @RequestMapping("api/v1/accounts")
 public class AccountController {

@@ -6,9 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 public abstract class BaseCrudServiceImpl<T, R extends JpaRepository<T, Long>> implements BaseCrudService<T> {
     protected R repository;
 

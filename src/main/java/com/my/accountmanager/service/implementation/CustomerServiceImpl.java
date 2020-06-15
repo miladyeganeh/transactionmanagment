@@ -11,9 +11,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
+
 @Service
 public class CustomerServiceImpl extends BaseCrudServiceImpl<CustomerEntity, CustomerRepository> implements CustomerService {
     private static final Logger logger = LoggerFactory.getLogger(CustomerServiceImpl.class);

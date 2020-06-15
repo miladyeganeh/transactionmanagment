@@ -11,9 +11,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
 
 @Service
 public class DepositServiceImpl extends BaseCrudServiceImpl<DepositEntity, DepositRepository> implements DepositService {

@@ -20,10 +20,6 @@ import org.springframework.stereotype.Service;
 import java.util.Date;
 import java.util.Optional;
 
-/**
- * @author M.Yeganeh on 31/05/2020.
- */
-
 @Service
 public class AccountServiceImpl extends BaseCrudServiceImpl<AccountEntity, AccountRepository> implements AccountService {
     private static final Logger logger = LoggerFactory.getLogger(AccountServiceImpl.class);
